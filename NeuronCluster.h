@@ -12,20 +12,21 @@ public:
     NeuronCluster(vector<Neuron> Neurons_t, int Gammafrequency_t);
     NeuronCluster();
     bool AddNeuron(Neuron Neuron);
-    bool AddEmptyNeuron();
+    bool AddEmptyNeuron(int NeuronNumber);
     bool RemoveNeuron(int NeuronNumber);
     bool ChangeGammafrequency(int Gammafrequency_t);
     bool RunCluster();
     bool printNeuronInformation(int NeuronNumber);
     bool printAllNeuronInformation();
+    bool AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, int weight_t);
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
-    bool UpdateNeuron(int NeuronNumber_t,int threshold,vector<int>,vector<double>,vector<STint>);
+    bool UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple<int,double,STint>> inputConnections);
     vector<int> GetNeurons();
     int Neuroncount();
 private:
     int Neuroncount_cluster;
     int Gammafrequency;
-    vector<array<int,2>> NeuronNumbers;
+    vector<int> NeuronNumbers;
     vector<Neuron> Neurons;
 };
 

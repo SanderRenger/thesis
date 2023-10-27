@@ -15,12 +15,12 @@ public:
     bool AddEmptyNeuron(int NeuronNumber);
     bool RemoveNeuron(int NeuronNumber);
     bool ChangeGammafrequency(int Gammafrequency_t);
-    bool RunCluster();
     bool printNeuronInformation(int NeuronNumber);
     bool printAllNeuronInformation();
-    bool AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, int weight_t);
+    bool AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, double weight_t);
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
     bool UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple<int,double,STint>> inputConnections);
+    STint ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
     vector<int> GetNeurons();
     int Neuroncount();
 private:

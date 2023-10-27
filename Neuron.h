@@ -14,10 +14,10 @@ class Neuron {
 public:
     Neuron(int NeuronNumber_t,int gammafrequency_t, double threshold_t,vector<tuple<int,double,STint>> inputConnections_t);
     Neuron();
-    bool output();
-    bool UpdateNeuronInputSpiketime(int Neuronnumber, STint spiketime);
+    STint output(int Gammafrequency);
+    bool UpdateNeuronInputSpiketime(int Neuronnumber, int current_time);
     bool UpdateNeuronInputWeight(int Neuronnumber,int Weights);
-    void AddNeuronInput(int Neuronnumber, int weight);
+    void AddNeuronInput(int Neuronnumber, double weight);
     bool RemoveNeuronInput(int Neuronnumber);
     void UpdateNeuronThreshold(double threshold_t);
     void UpdateNeuronInputs(vector<tuple<int,double,STint>> inputConnections_t);

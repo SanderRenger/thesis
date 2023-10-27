@@ -15,6 +15,7 @@ private:
     vector<NeuronCluster> NeuronClusters;
 public:
     NeuralNetwork();
+    vector<tuple<int, int,vector<array<int,2>>>> getNeuronList();
     bool DeleteNeuron(int NeuronNumber);
     bool DeleteNeuron(int NeuronNumber, int ClusterNumber);
     bool AddNeuron(int ClusterNumber);
@@ -23,7 +24,8 @@ public:
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
     bool Printclusterinformation(int clusternumber);
     bool PrintNeuronList();
-    bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,int weight_t);
+    bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);
+    vector<tuple<int,STint>> ActivateNeuron(int NeuronNumber, int current_time);
 };
 
 

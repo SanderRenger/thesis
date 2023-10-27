@@ -13,5 +13,6 @@ add_executable(thesis main.cpp
         system.h
         system.cpp
         system.cpp
+        event.cpp
 
 )

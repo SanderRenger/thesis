@@ -4,10 +4,9 @@
 #include <vector>
 #include <array>
 #include "NeuronCluster.h"
-#include "global.h"
 NeuronCluster::NeuronCluster(){
     Neuroncount_cluster = 1;
-    Gammafrequency =100;
+    Gammafrequency =20;
     NeuronNumbers.push_back(1);
     Neuron Neuron;
     Neurons.push_back(Neuron);
@@ -79,19 +78,11 @@ bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple
 
 
 bool NeuronCluster::ChangeGammafrequency(int Gammafrequency_t){
-    Gammafrequency = Gammafrequency;
+    Gammafrequency = Gammafrequency_t;
     return true;
 };
 
-bool NeuronCluster::RunCluster(){
-    bool temp= false;
-    for (int i=0;i<Neuroncount_cluster;i++){
-        temp = Neurons[i].output();
-    }
-    return temp;
-};
-
-bool NeuronCluster::AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, int weight_t) {
+bool NeuronCluster::AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, double weight_t) {
     for(int i=0; i<Neuroncount_cluster;i++){
         if (NeuronNumbers[i] == NeuronNumber_2){
             Neurons[i].AddNeuronInput(NeuronNumber_1, weight_t);
@@ -116,6 +107,16 @@ bool NeuronCluster::printAllNeuronInformation(){
             cout <<"--------------------------------------------------------" << endl;
     }
     return true;
+};
+
+STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
+    for (int i=0; i<Neuroncount_cluster;i++) {
+        if (NeuronNumbers[i] == NeuronNumber){
+            Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
+            return Neurons[i].output(Gammafrequency);
+        }
+    }
+    return {0,true};
 };
 
 //bool NeuronCluster::StandardCluster9Neurons(){};

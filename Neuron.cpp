@@ -4,6 +4,7 @@
 
 #include "Neuron.h"
 #include "global.h"
+#include "event.h"
 
 Neuron::Neuron(int NeuronNumber_t,int gammafrequency_t, double threshold_t,vector<tuple<int,double,STint>> inputConnections_t){
     NeuronNumber = NeuronNumber_t;
@@ -32,26 +33,51 @@ int Neuron::InputconnectionsSize(){
 Neuron::Neuron(){
     NeuronNumber = 1;
     threshold = 1;
-    inputConnections.push_back({0,0,{0,true}});
+    inputConnections;
     outputspiketime = {0,true};
     //outputConnections.push_back({0,0});
 }
 
-bool Neuron::output() {
-return true;
+STint Neuron::output(int Gammafrequency) {
+   double output=0;
+   double weights_t;
+   STint Spiketime_t;
+   for(int i=0;i< Gammafrequency;i++){
+       for(int j=0;j<inputConnections.size();j++){
+           weights_t =get<1>(inputConnections[j]);
+           Spiketime_t =get<2>(inputConnections[j]);
+           if (!Spiketime_t.get_bool()){
+
+               if (i >= Spiketime_t.get_int()){
+                   if(i< Spiketime_t.get_int()+10){
+                       output += ((double)1/(double)10)*weights_t;
+                   }
+                   if(i>= Spiketime_t.get_int()+10){
+                       output -=((double)1/(double)(Gammafrequency-(Spiketime_t.get_int()+10)))*weights_t;
+                   }
+               }
+           }
+       }
+       //cout << "output:\t" << output << endl;
+       if (output >= threshold){
+           return {i,false};
+
+       }
+   }
+    return {0,true};
 }
 
-bool Neuron::UpdateNeuronInputSpiketime(int Neuronnumber, STint spiketime){
+bool Neuron::UpdateNeuronInputSpiketime(int Neuronnumber_t, int current_time){
     for(int i=0; i<inputConnections.size();i++){
-        if (Neuronnumber == get<0>(inputConnections[i]) ){
-            get<2>(inputConnections[i])  = spiketime;
+        if (Neuronnumber_t == get<0>(inputConnections[i]) ){
+            get<2>(inputConnections[i])  = {current_time,false};
             return true;
         }
     }
     return false;
 };
 
-void Neuron::AddNeuronInput(int Neuronnumber,int weight){
+void Neuron::AddNeuronInput(int Neuronnumber,double weight){
     inputConnections.push_back({Neuronnumber,weight,{0,true}});
 };
 

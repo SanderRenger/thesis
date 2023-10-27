@@ -3,12 +3,31 @@
 //
 #include <vector>
 #include <array>
+#include <iostream>
 #include "system.h"
 NeuralNetwork::NeuralNetwork(){
     Neurons_total = 1;
     NeuronList.push_back({Neurons_total,0,{{0,0}}});
     NeuronCluster NeuronCluster;
     NeuronClusters.push_back(NeuronCluster);
+}
+
+vector<tuple<int, int, vector<array<int, 2>>>> NeuralNetwork::getNeuronList() {
+    return NeuronList;
+}
+
+vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int current_time) {
+    STint temp1;
+    vector<tuple<int,STint>> temp2;
+    int Neuroncluster = get<1>(NeuronList[NeuronNumber]);
+    vector<array<int,2>> Outputs = get<2>(NeuronList[NeuronNumber-1]);
+    for (int i =0; i < Outputs.size();i++) {
+        temp1= NeuronClusters[get<1>(NeuronList[get<0>(Outputs[i])-1])].ActivateNeuronInput(get<0>(Outputs[i]),NeuronNumber,current_time);
+        if (!temp1.get_bool()){
+            temp2.push_back({get<0>(Outputs[i]),temp1});
+        }
+    }
+    return temp2;
 }
 
 bool NeuralNetwork::DeleteNeuron(int NeuronNumber){
@@ -55,7 +74,7 @@ bool NeuralNetwork::DeleteNeuron(int NeuronNumber, int ClusterNumber){
 bool NeuralNetwork::AddNeuron(int ClusterNumber){
     if(NeuronClusters.size() >= ClusterNumber){
         Neurons_total +=1;
-        NeuronList.push_back({Neurons_total,ClusterNumber,{{0,0}}});
+        NeuronList.push_back({Neurons_total,ClusterNumber,{}});
         NeuronClusters[ClusterNumber].AddEmptyNeuron(Neurons_total);
         return true;
     }
@@ -87,8 +106,8 @@ bool NeuralNetwork::UpdateGammaFrequency(int ClusterNumber,int Gammafrequency){
     }
     return false;
 };
-// Output, Input, Delay
-bool NeuralNetwork::Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,int weight_t) {
+// Output, Input, Delay,weight
+bool NeuralNetwork::Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t) {
     int temp =0;
     bool temp2=false;
     int output;

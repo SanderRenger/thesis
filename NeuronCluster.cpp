@@ -6,10 +6,11 @@
 #include "NeuronCluster.h"
 NeuronCluster::NeuronCluster(){
     Neuroncount_cluster = 1;
-    Gammafrequency =20;
+    Gammafrequency =100;
     NeuronNumbers.push_back(1);
     Neuron Neuron;
     Neurons.push_back(Neuron);
+    Gammareset = true;
 }
 
 NeuronCluster::NeuronCluster(vector<Neuron> Neurons_t, int Gammafrequency_t){
@@ -31,7 +32,15 @@ vector<int> NeuronCluster::GetNeurons(){
     return temp;
 }
 
+int NeuronCluster::GetGammafrequency() {
+    return Gammafrequency;
+}
 
+void NeuronCluster::DoGammaCycle(){
+    for(int i =0;i<Neurons.size();i++){
+        Neurons[i].GammaCycle(Gammareset,Gammafrequency);
+    }
+}
 
 bool NeuronCluster::UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition){
     for(int i=0; i<Neuroncount_cluster+1;i++){
@@ -63,7 +72,7 @@ bool NeuronCluster::RemoveNeuron(int NeuronNumber){
     return temp;
 }
 // NeuronNumber, threshold,
-bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple<int,double,STint>> inputConnections){
+bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections){
     for(int i=0; i<Neuroncount_cluster;i++){
         if (NeuronNumbers[i] == NeuronNumber_t){
 
@@ -110,10 +119,15 @@ bool NeuronCluster::printAllNeuronInformation(){
 };
 
 STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
+    STint temp1;
     for (int i=0; i<Neuroncount_cluster;i++) {
         if (NeuronNumbers[i] == NeuronNumber){
             Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
-            return Neurons[i].output(Gammafrequency);
+            temp1= Neurons[i].output(Gammafrequency);
+            if (!temp1.get_bool()){
+                temp1 = {(temp1.get_int()-current_time%Gammafrequency),false};
+            }
+            return temp1;
         }
     }
     return {0,true};

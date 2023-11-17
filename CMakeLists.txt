@@ -14,5 +14,7 @@ add_executable(thesis main.cpp
         system.cpp
         system.cpp
         event.cpp
+        filereader.cpp
+        filereader.h
 
 )

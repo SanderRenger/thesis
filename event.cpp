@@ -34,10 +34,20 @@ void EventHandler::addEvent(const event &event_t) {
     eventqueue.push_back(event_t);
 }
 
-NeuralNetwork EventHandler::handleEvents(NeuralNetwork NNetwork, int current_time) {
+void EventHandler::addgammaevents(NeuralNetwork &NNetwork){
+    vector<array<int,2>> temp;
+    temp = NNetwork.Getallclusters();
+    cout << temp.size();
+    for(int i=0;i<temp.size();i++){
+        eventqueue.push_back({2147483647-i,get<1>(temp[i])});
+    }
+}
+
+void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
     bool fired= false;
     while (!eventqueue.empty()) {
         vector<tuple<int,STint>> temp;
+
         if (eventqueue.back().getdelay() != 0) {
             event temp = eventqueue.back();
             temp.lowerdelay();
@@ -46,24 +56,34 @@ NeuralNetwork EventHandler::handleEvents(NeuralNetwork NNetwork, int current_tim
         }
         else {
             fired = true;
-            event current_neuron = eventqueue.back();
-            for (int i = 0; i < eventqueue.size() - 1; i++) {
-                if (current_neuron.getneuronNumber() == eventqueue[i].getneuronNumber()) {
-                    eventqueue.erase(eventqueue.begin() + i);
+            int eventnumber = eventqueue.back().getneuronNumber();
+            if (eventnumber>2000000000){
+
+                int cluster = 2147483647 - eventnumber;
+                NNetwork.GammaCycle(cluster);
+                newqueue.push_back({eventnumber,NNetwork.GetGammafrequency(cluster)});
+                eventqueue.pop_back();
+                cout << "Gammacycle event:\t" << cluster << "\ttime:\t" << current_time << endl;
+            }
+            else{event current_neuron = eventqueue.back();
+                for (int i = 0; i < eventqueue.size() - 1; i++) {
+                    if (current_neuron.getneuronNumber() == eventqueue[i].getneuronNumber()) {
+                        eventqueue.erase(eventqueue.begin() + i);
+                    }
                 }
-            }
-            cout << "Neuron event:\t" << current_neuron.getneuronNumber() << "\ttime:\t" << current_time << endl;
-            temp = NNetwork.ActivateNeuron(current_neuron.getneuronNumber(), current_time);
-            for (int i = 0; i < temp.size(); i++) {
-                newqueue.push_back({get<0>(temp[i]), get<1>(temp[i]).get_int()});
-            }
-            eventqueue.pop_back();
+                cout << "Neuron event:\t" << current_neuron.getneuronNumber() << "\ttime:\t" << current_time << endl;
+                temp = NNetwork.ActivateNeuron(current_neuron.getneuronNumber(), current_time);
+                for (int i = 0; i < temp.size(); i++) {
+                    newqueue.push_back({get<0>(temp[i]), get<1>(temp[i]).get_int()});
+                }
+                eventqueue.pop_back();}
+
+
         }
     }
     if (fired){
         cout<<endl;
     }
-    return NNetwork;
 }
 
 void EventHandler::printqueue() {
@@ -91,3 +111,4 @@ void EventHandler::swapqueue() {
 bool EventHandler::empty() {
     return eventqueue.empty();
 }
+

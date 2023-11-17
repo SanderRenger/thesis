@@ -11,35 +11,84 @@
 #include "system.h"
 //int gammafrequency, double threshold,std::vector<double> inputs,std::vector<double> weights,std::vector<STint> inputspiketime
 using namespace std;
+void loopsimulation(NeuralNetwork &Simulation){
 
-void run_system(){
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.UpdateNeuron(4,1.5,{},{});
+    Simulation.Addconnection(1,2,0,1);
+    Simulation.Addconnection(1,3,0,0);
+    Simulation.Addconnection(3,4,0,1);
+    Simulation.Addconnection(2,4,0,1);
+    Simulation.Addconnection(5,1,0,1);
+    Simulation.Addconnection(4,5,0,1);
+}
+void treesimulation(NeuralNetwork &Simulation){
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
 
+    Simulation.Addconnection(1,2,0,1);
+    Simulation.Addconnection(1,3,0,1);
+    Simulation.Addconnection(2,4,0,1);
+    Simulation.Addconnection(3,5,0,1);
+    Simulation.Addconnection(3,6,0,1);
+
+}
+
+void delayedactivationsimulation(NeuralNetwork &Simulation){
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+    Simulation.AddNeuron(0);
+
+    Simulation.Addconnection(1,2,0,1);
+    Simulation.Addconnection(2,3,0,1);
+    Simulation.Addconnection(2,4,0,0.5);
+    Simulation.Addconnection(4,6,0,1);
+    Simulation.Addconnection(3,5,0,1);
+    Simulation.Addconnection(5,4,0,0);
+}
+
+NeuralNetwork simulation(int simulationnumber){
+    NeuralNetwork Simulation;
+    switch (simulationnumber){
+        case 1:
+            treesimulation( Simulation);
+            break;
+        case 2:
+            loopsimulation(Simulation);
+            break;
+        case 3:
+            delayedactivationsimulation(Simulation);
+            break;
+        default:
+            cout << "non valid simulation number" << endl;
+            break;
+    }
+    return Simulation;
 };
-
 int main() {
-    int simulationtime=0;
-    vector<int> inputs(1,2);
-    vector<double> weights(1,1);
-    vector<STint> inputspiketime(1,{0,true});
-    double threshold = 1;
-    vector<Neuron> Neuron2(2);
-    NeuralNetwork Network1;
-    Network1.UpdateNeuron(1,1,{{}},{{2,0}});
-    Network1.AddNeuron(0,1,{{1,0.5,{0,true}}},{});
-    Network1.AddNeuron(0);
-    Network1.Addconnection(3,2,0,0.5);
-    Network1.Addconnection(2,1,0,1.01);
-    Network1.Addconnection(2,3,0,1.01);
+   int simulationtime=0;
     //Network1.DeleteNeuron(1);
-    EventHandler EventHandler1;
-    EventHandler1.addEvent({1,0});
-    EventHandler1.addEvent({3,0});
-    while(!EventHandler1.empty()){
-        Network1 = EventHandler1.handleEvents(Network1,simulationtime);
-        EventHandler1.swapqueue();
-           if (simulationtime==1000){break;
-        }
+    NeuralNetwork Simulation = simulation(3);
+    EventHandler EventHandler;
+    EventHandler.addEvent({1,0});
+    EventHandler.addgammaevents(Simulation);
+    while(!EventHandler.empty()){
+        EventHandler.handleEvents(Simulation,simulationtime);
+        EventHandler.swapqueue();
+           if (simulationtime==110) {
+               break;
+           }
         simulationtime++;
     }
     return 0;
+
+
 }

@@ -7,7 +7,7 @@
 #include "system.h"
 NeuralNetwork::NeuralNetwork(){
     Neurons_total = 1;
-    NeuronList.push_back({Neurons_total,0,{{0,0}}});
+    NeuronList.push_back({Neurons_total,0,{}});
     NeuronCluster NeuronCluster;
     NeuronClusters.push_back(NeuronCluster);
 }
@@ -24,10 +24,17 @@ vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int cur
     for (int i =0; i < Outputs.size();i++) {
         temp1= NeuronClusters[get<1>(NeuronList[get<0>(Outputs[i])-1])].ActivateNeuronInput(get<0>(Outputs[i]),NeuronNumber,current_time);
         if (!temp1.get_bool()){
-            temp2.push_back({get<0>(Outputs[i]),temp1});
+               temp2.push_back({get<0>(Outputs[i]),temp1});
         }
     }
     return temp2;
+}
+vector<array<int,2>> NeuralNetwork::Getallclusters(){
+    vector<array<int,2>> temp;
+    for(int i=0; i<NeuronClusters.size();i++){
+        temp.push_back({i,NeuronClusters[i].GetGammafrequency()});
+    }
+    return temp;
 }
 
 bool NeuralNetwork::DeleteNeuron(int NeuronNumber){
@@ -42,7 +49,7 @@ bool NeuralNetwork::DeleteNeuron(int NeuronNumber){
     return false;
 };
 
-bool NeuralNetwork::UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<array<int,2>> outputConnections_t) {
+bool NeuralNetwork::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<array<int,2>> outputConnections_t) {
     for(int i =0;i<NeuronList.size();i++){
         if (NeuronNumber_t==get<0>(NeuronList[i])){
             NeuronClusters[get<1>(NeuronList[i])].UpdateNeuron(NeuronNumber_t,threshold_t,inputConnections);
@@ -105,6 +112,21 @@ bool NeuralNetwork::UpdateGammaFrequency(int ClusterNumber,int Gammafrequency){
         return true;
     }
     return false;
+};
+
+int NeuralNetwork::GetGammafrequency(int ClusterNumber) {
+    if(NeuronClusters.size() >= ClusterNumber) {
+        int temp = NeuronClusters[ClusterNumber].GetGammafrequency();
+        return temp;
+    }
+    return 0;
+};
+
+void NeuralNetwork::GammaCycle(int Cluster) {
+    if(NeuronClusters.size() >= Cluster) {
+        NeuronClusters[Cluster].DoGammaCycle();
+    }
+
 };
 // Output, Input, Delay,weight
 bool NeuralNetwork::Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t) {

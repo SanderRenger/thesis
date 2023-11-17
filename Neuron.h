@@ -27,6 +27,7 @@ public:
     int GetNeuronNumber();
     int InputconnectionsSize();
     int OutputconnectionsSize();
+    void GammaCycle(bool Gammareset,int Gammafrequency);
 private:
     int NeuronNumber;
     STint outputspiketime;

@@ -20,12 +20,15 @@ public:
     bool DeleteNeuron(int NeuronNumber, int ClusterNumber);
     bool AddNeuron(int ClusterNumber);
     bool AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<array<int,2>> outputConnections_t);
-    bool UpdateNeuron(int NeuronNumber_t,int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<array<int,2>> outputConnections_t);
+    bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<array<int,2>> outputConnections_t);
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
     bool Printclusterinformation(int clusternumber);
     bool PrintNeuronList();
     bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);
     vector<tuple<int,STint>> ActivateNeuron(int NeuronNumber, int current_time);
+    vector<array<int,2>> Getallclusters();
+    int GetGammafrequency(int ClusterNumber);
+    void GammaCycle(int Cluster);
 };
 
 

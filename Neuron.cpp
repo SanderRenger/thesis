@@ -5,6 +5,8 @@
 #include "Neuron.h"
 #include "global.h"
 #include "event.h"
+#include <iostream>
+#include <fstream>
 
 Neuron::Neuron(int NeuronNumber_t,int gammafrequency_t, double threshold_t,vector<tuple<int,double,STint>> inputConnections_t){
     NeuronNumber = NeuronNumber_t;
@@ -32,38 +34,57 @@ int Neuron::InputconnectionsSize(){
 //}
 Neuron::Neuron(){
     NeuronNumber = 1;
-    threshold = 1;
+    threshold = 0.99;
     inputConnections;
     outputspiketime = {0,true};
     //outputConnections.push_back({0,0});
 }
 
 STint Neuron::output(int Gammafrequency) {
+    bool temp = false;
+    int temp2;
    double output=0;
    double weights_t;
    STint Spiketime_t;
+   // ofstream myfile;
+   //if (NeuronNumber == 4){
+   //   myfile.open ("log1.txt");
+   //}
+
    for(int i=0;i< Gammafrequency;i++){
        for(int j=0;j<inputConnections.size();j++){
+
            weights_t =get<1>(inputConnections[j]);
            Spiketime_t =get<2>(inputConnections[j]);
            if (!Spiketime_t.get_bool()){
-
                if (i >= Spiketime_t.get_int()){
                    if(i< Spiketime_t.get_int()+10){
                        output += ((double)1/(double)10)*weights_t;
                    }
+
                    if(i>= Spiketime_t.get_int()+10){
                        output -=((double)1/(double)(Gammafrequency-(Spiketime_t.get_int()+10)))*weights_t;
                    }
+
                }
+               //if (NeuronNumber==4){
+               //    myfile << output << endl;
+               //}
            }
-       }
-       //cout << "output:\t" << output << endl;
-       if (output >= threshold){
-           return {i,false};
+
 
        }
+       if (output >= threshold){
+           temp = true;
+           temp2 = i;
+       }
    }
+    //if (NeuronNumber==4){
+    //    myfile.close();
+    //}
+    if (temp){
+        return {temp2,false};
+    }
     return {0,true};
 }
 
@@ -102,6 +123,26 @@ bool Neuron::RemoveNeuronInput(int Neuronnumber){
     return false;
 };
 
+void Neuron::GammaCycle(bool Gammareset,int Gammafrequency) {
+    for (int i =0;i<inputConnections.size();i++){
+        if (!get<2>(inputConnections[i]).get_bool()){
+            if (Gammareset){ //reset or put old spike in negative gammacycle time
+                get<2>(inputConnections[i]) = {0,true};
+            }
+            else{
+                    get<2>(inputConnections[i]) = {get<2>(inputConnections[i]).get_int()-Gammafrequency,false};
+            }
+            if (!outputspiketime.get_bool()) {
+                if (outputspiketime.get_int() >
+                    get<2>(inputConnections[i]).get_int()) { //update weights based on spiketime close to threshhold
+                    get<1>(inputConnections[i]) += 0;
+                } else {
+                    get<1>(inputConnections[i]) -= 0;
+                }
+            }
+        }
+    }
+}
 bool Neuron::UpdateNeuronInputWeight(int Neuronnumber,int Weights){
     for(int i=0; i<inputConnections.size();i++){
         if (Neuronnumber == get<0>(inputConnections[i])){

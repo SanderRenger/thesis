@@ -27,12 +27,15 @@ private:
     vector<event> eventqueue;
     vector<event> newqueue;
 public:
+    void addgammaevents(NeuralNetwork &NNetwork);
     void addEvent(const event& event_t);
-    NeuralNetwork handleEvents(NeuralNetwork NNetwork,int current_time);
+    void handleEvents(NeuralNetwork &NNetwork,int current_time);
     void printqueue();
     void printnewqueue();
     void swapqueue();
     bool empty();
+
+
 };
 
 

@@ -22,7 +22,7 @@ public:
     STint greater_than(STint a, STint b);
     print(STint a);
     STint add_variable(STint a, STint b);
-    STint add_constant(STint a, int b);
+    STint add_constant(int b);
     int get_int();
     bool get_bool();
 private:

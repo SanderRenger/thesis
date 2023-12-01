@@ -7,118 +7,102 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 
-void parsefile(NeuralNetwork &Simulation, std::ifstream file){
+void parsefile(NeuralNetwork &Simulation,string filename){
+    std::ifstream file(filename);
     if (!file.is_open()){
         cerr << "Failed to open file." << endl;
         return;
     }
-    vector<std::pair<int, float>> neuronData;
+    vector<tuple<int, float>> neuronData;
     string line;
+    vector<tuple<int, bool,vector<tuple<int,vector<tuple<int,double>>>>>> clusterData;
+    int current_cluster=-1;
+    int current_neuron=-1;
+    int neurons_total=0;
     while (getline(file,line)) {
         std::istringstream iss(line);
         std::string key;
         std::string value;
         if (std::getline(iss, key, ':') && std::getline(iss, value)) {
-            if (key == "Neuron") {
-                size_t startPos = line.find("Neuron:") + 8;
-                string data = line.substr(startPos);
 
-                istringstream iss(data);
-                string package;
-
-                // Split into individual packages
-                while (std::getline(iss, package, '}')) {
-                    if (package.size() > 1) {
-                        package = package.substr(package.find('{') + 1); // Remove '{'
-                        size_t commaPos = package.find(',');
-
-                        // Extract the integer and float values
-                        int first = std::stoi(package.substr(0, commaPos));
-                        float second = std::stof(package.substr(commaPos + 1));
-
-                        neuronData.emplace_back(first, second);
-                    }
-
-                    if (iss.peek() == ',') {
-                        iss.ignore(); // Ignore the comma after '}'
-                    }
-                }
-            } else if (key == "Cluster") {
+            if (key == "Cluster") {
+                current_cluster +=1;
                 size_t startPos = line.find("Cluster:") + 8;
                 string data = line.substr(startPos);
-
                 istringstream iss(data);
                 string package;
-
                 // Split into individual packages
                 while (std::getline(iss, package, '}')) {
                     if (package.size() > 1) {
                         package = package.substr(package.find('{') + 1); // Remove '{'
                         size_t commaPos = package.find(',');
-
                         // Extract the integer and float values
                         int first = std::stoi(package.substr(0, commaPos));
-                        float second = std::stof(package.substr(commaPos + 1));
-
-                        neuronData.emplace_back(first, second);
+                        bool second = std::stoi(package.substr(commaPos + 1));
+                        clusterData.push_back({first, second, {}});
                     }
-
                     if (iss.peek() == ',') {
                         iss.ignore(); // Ignore the comma after '}'
                     }
                 }
-            } else if (key == "Mode") {
-                size_t startPos = line.find("Mode:") + 8;
+            }  else if (key == "Neuron") {
+                current_neuron +=1;
+                size_t startPos = line.find("Neuron:") + 8;
                 string data = line.substr(startPos);
-
                 istringstream iss(data);
                 string package;
-
-                // Split into individual packages
+                int first;
+                int delay;
+                double second;
+                vector<tuple<int,double>> temp;
+                neurons_total+=1;
                 while (std::getline(iss, package, '}')) {
                     if (package.size() > 1) {
-                        package = package.substr(package.find('{') + 1); // Remove '{'
+
+                        package = package.substr(package.find('{') + 1);
+                        package = package.substr(package.find('{') + 1);// Remove '{'
                         size_t commaPos = package.find(',');
-
                         // Extract the integer and float values
-                        int first = std::stoi(package.substr(0, commaPos));
-                        float second = std::stof(package.substr(commaPos + 1));
+                            if (package.substr(0, commaPos).empty()) {
+                                delay = std::stoi(package.substr(commaPos + 1));
+                            }
+                            else {
+                                second = std::stof(package.substr(commaPos + 1));
+                                first = std::stoi(package.substr(0, commaPos));
+                                temp.push_back({first,second});
 
-                        neuronData.emplace_back(first, second);
-                    }
+                            }
 
-                    if (iss.peek() == ',') {
-                        iss.ignore(); // Ignore the comma after '}'
+
                     }
-                }
+            }
+                get<2>(clusterData[current_cluster]).push_back({delay,temp});
+        }
+            else{
+
             }
         }
 
     }
-}
-
-vector<tuple<int, float>> parseNeuronConnections(const std::string& neuronData) {
-    vector<tuple<int, float>> connections;
-    istringstream iss(neuronData);
-    string package;
-
-    while (getline(iss, package, '}')) {
-        if (package.size() > 1) {
-            package = package.substr(package.find('{') + 1); // Remove '{'
-            size_t commaPos = package.find(',');
-
-            int first = std::stoi(package.substr(0, commaPos));
-            float second = std::stof(package.substr(commaPos + 1));
-
-            connections.emplace_back(first, second);
-        }
-
-        if (iss.peek() == ',') {
-            iss.ignore(); // Ignore the comma after '}'
+    for(int i=0;i<clusterData.size();i++){
+        Simulation.AddCluster();
+        for(int j=0;j<get<2>(clusterData[i]).size();j++){
+            Simulation.AddNeuron(i);
         }
     }
-    return connections;
+    current_neuron =0;
+    for(int i=0;i<clusterData.size();i++){
+
+        for(int j=0;j<get<2>(clusterData[i]).size();j++){
+
+            for(int k=0; k<get<1>(get<2>(clusterData[i])[j]).size();k++){
+               Simulation.Addconnection(current_neuron,get<0>(get<1>(get<2>(clusterData[i])[j])[k]),get<0>(get<2>(clusterData[i])[j]),get<1>(get<1>(get<2>(clusterData[i])[j])[k]));
+            }
+            current_neuron+=1;
+        }
+    }
 }
 
 /*Mode: true
@@ -194,4 +178,4 @@ Neuron: 150
         "B": {
             "v": 100,
             "spikes": 1000}}
-}/
+}*/

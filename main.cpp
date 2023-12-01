@@ -9,6 +9,7 @@
 #include <bits/stdc++.h>
 #include "global.h"
 #include "system.h"
+#include "filereader.h"
 //int gammafrequency, double threshold,std::vector<double> inputs,std::vector<double> weights,std::vector<STint> inputspiketime
 using namespace std;
 void loopsimulation(NeuralNetwork &Simulation){
@@ -18,7 +19,7 @@ void loopsimulation(NeuralNetwork &Simulation){
     Simulation.AddNeuron(0);
     Simulation.AddNeuron(0);
     Simulation.UpdateNeuron(4,1.5,{},{});
-    Simulation.Addconnection(1,2,0,1);
+    Simulation.Addconnection(1,2,5,1);
     Simulation.Addconnection(1,3,0,0);
     Simulation.Addconnection(3,4,0,1);
     Simulation.Addconnection(2,4,0,1);
@@ -74,20 +75,24 @@ NeuralNetwork simulation(int simulationnumber){
     return Simulation;
 };
 int main() {
-   int simulationtime=0;
+    NeuralNetwork Simulation;
+    string filename = "input.txt";
+    parsefile(Simulation,filename);
+    Simulation.PrintNeuronList();
+    //int simulationtime=0;
     //Network1.DeleteNeuron(1);
-    NeuralNetwork Simulation = simulation(3);
-    EventHandler EventHandler;
-    EventHandler.addEvent({1,0});
-    EventHandler.addgammaevents(Simulation);
-    while(!EventHandler.empty()){
-        EventHandler.handleEvents(Simulation,simulationtime);
-        EventHandler.swapqueue();
-           if (simulationtime==110) {
-               break;
-           }
-        simulationtime++;
-    }
+    //NeuralNetwork Simulation = simulation(3);
+    //EventHandler EventHandler;
+    //EventHandler.addEvent({1,0});
+    //EventHandler.addgammaevents(Simulation);
+    //while(!EventHandler.empty()){
+    //    EventHandler.handleEvents(Simulation,simulationtime);
+    //    EventHandler.swapqueue();
+    //       if (simulationtime==110) {
+    //           break;
+    //       }
+    //    simulationtime++;
+    //}
     return 0;
 
 

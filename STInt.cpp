@@ -145,11 +145,11 @@ STint STint::add_variable(STint a, STint b) {
         return STint{a.value+b.value,false};
     };
 
-STint STint::add_constant(STint a, int b) {
-        if (a.infArrival) {
-            return STint{0,true};
+STint STint::add_constant(int b) {
+        if (infArrival) {
+            return {0,true};
         }
-        return STint{a.value+b,false};
+        return STint{value+b,false};
     };
 int STint::get_int(){
     return value;

@@ -10,4 +10,4 @@
 #include "system.h"
 #endif //THESIS_FILEREADER_H
 
-void filereader(NeuralNetwork &Simulation, std::ifstream file);
+void parsefile(NeuralNetwork &Simulation, string filename);

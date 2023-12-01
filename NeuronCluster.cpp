@@ -5,11 +5,11 @@
 #include <array>
 #include "NeuronCluster.h"
 NeuronCluster::NeuronCluster(){
-    Neuroncount_cluster = 1;
+    Neuroncount_cluster = 0;
     Gammafrequency =100;
-    NeuronNumbers.push_back(1);
+    NeuronNumbers;
     Neuron Neuron;
-    Neurons.push_back(Neuron);
+    Neurons;
     Gammareset = true;
 }
 

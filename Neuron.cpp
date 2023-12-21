@@ -89,6 +89,7 @@ STint Neuron::output(int Gammafrequency) {
 }
 
 bool Neuron::UpdateNeuronInputSpiketime(int Neuronnumber_t, int current_time){
+    cout <<NeuronNumber<<"\t" <<Neuronnumber_t<< endl;
     for(int i=0; i<inputConnections.size();i++){
         if (Neuronnumber_t == get<0>(inputConnections[i]) ){
             get<2>(inputConnections[i])  = {current_time,false};

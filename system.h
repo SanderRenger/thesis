@@ -22,6 +22,7 @@ public:
     bool AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
+    void UpdateThreshold(int NeuronNumber_t,double threshold_t);
     bool Printclusterinformation(int clusternumber);
     bool PrintNeuronList();
     bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);

@@ -76,23 +76,22 @@ NeuralNetwork simulation(int simulationnumber){
 };
 int main() {
     NeuralNetwork Simulation;
-    string filename = "input.txt";
+    string filename = "input2.txt";
     parsefile(Simulation,filename);
-    Simulation.PrintNeuronList();
-    //int simulationtime=0;
-    //Network1.DeleteNeuron(1);
-    //NeuralNetwork Simulation = simulation(3);
-    //EventHandler EventHandler;
-    //EventHandler.addEvent({1,0});
-    //EventHandler.addgammaevents(Simulation);
-    //while(!EventHandler.empty()){
-    //    EventHandler.handleEvents(Simulation,simulationtime);
-    //    EventHandler.swapqueue();
-    //       if (simulationtime==110) {
-    //           break;
-    //       }
-    //    simulationtime++;
-    //}
+    //Simulation.Printclusterinformation(0);
+    //Simulation.PrintNeuronList();
+    int simulationtime=0;
+    EventHandler EventHandler;
+    EventHandler.addEvent({1,0});
+    EventHandler.addgammaevents(Simulation);
+    while(!EventHandler.empty()){
+        EventHandler.handleEvents(Simulation,simulationtime);
+        EventHandler.swapqueue();
+           if (simulationtime==1000) {
+               break;
+           }
+        simulationtime++;
+    }
     return 0;
 
 

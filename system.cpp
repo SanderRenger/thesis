@@ -27,6 +27,7 @@ vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int cur
     vector<int> Outputs = get<2>(NeuronList[NeuronNumber-1]);
     int delay = get<3>(NeuronList[NeuronNumber-1]);
     for (int i =0; i < Outputs.size();i++) {
+        cout << "cluster\t" << i << endl;
         temp1= NeuronClusters[get<1>(NeuronList[Outputs[i]-1])].ActivateNeuronInput(Outputs[i],NeuronNumber,current_time);
         if (!temp1.get_bool()){
                temp2.push_back({Outputs[i],temp1.add_constant(delay)});
@@ -65,6 +66,15 @@ bool NeuralNetwork::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tu
     return false;
 }
 
+
+void NeuralNetwork::UpdateThreshold(int NeuronNumber_t, double threshold_t) {
+
+    for(int i =0;i<NeuronList.size();i++){
+        if (NeuronNumber_t==get<0>(NeuronList[i])){
+            NeuronClusters[get<1>(NeuronList[i])].UpdateThreshold(NeuronNumber_t,threshold_t);
+        }
+    }
+}
 bool NeuralNetwork::DeleteNeuron(int NeuronNumber, int ClusterNumber){
     vector<int> temp;
         temp = NeuronClusters[ClusterNumber].GetNeurons();

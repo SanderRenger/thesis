@@ -39,7 +39,7 @@ void EventHandler::addgammaevents(NeuralNetwork &NNetwork){
     temp = NNetwork.Getallclusters();
     cout << temp.size();
     for(int i=0;i<temp.size();i++){
-        eventqueue.push_back({2147483647-i,get<1>(temp[i])});
+        eventqueue.push_back({2147483647-i,get<1>(temp[i])-2});
     }
 }
 

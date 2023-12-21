@@ -85,6 +85,13 @@ bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tu
     return false;
 };
 
+void NeuronCluster::UpdateThreshold(int NeuronNumber_t, double threshold_t) {
+    for(int i=0; i<Neuroncount_cluster;i++){
+        if (NeuronNumbers[i] == NeuronNumber_t){
+            Neurons[i].UpdateNeuronThreshold(threshold_t);
+        };
+    };
+};
 
 bool NeuronCluster::ChangeGammafrequency(int Gammafrequency_t){
     Gammafrequency = Gammafrequency_t;
@@ -120,6 +127,7 @@ bool NeuronCluster::printAllNeuronInformation(){
 
 STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
     STint temp1;
+    cout << "Neuroncount in cluster:\t " <<Neuroncount_cluster << endl;
     for (int i=0; i<Neuroncount_cluster;i++) {
         if (NeuronNumbers[i] == NeuronNumber){
             Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);

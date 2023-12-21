@@ -20,6 +20,7 @@ public:
     bool AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, double weight_t);
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections);
+    void UpdateThreshold(int NeuronNumber_t,double threshold_t);
     STint ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
     vector<int> GetNeurons();
     int Neuroncount();

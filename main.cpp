@@ -10,8 +10,10 @@
 #include "global.h"
 #include "system.h"
 #include "filereader.h"
+#include "filewriter.h"
 //int gammafrequency, double threshold,std::vector<double> inputs,std::vector<double> weights,std::vector<STint> inputspiketime
 using namespace std;
+
 void loopsimulation(NeuralNetwork &Simulation){
 
     Simulation.AddNeuron(0);
@@ -74,24 +76,28 @@ NeuralNetwork simulation(int simulationnumber){
     }
     return Simulation;
 };
+
+Run(NeuralNetwork &Simulation){
+int simulationtime=0;
+EventHandler EventHandler;
+EventHandler.addEvent({1,0});
+EventHandler.addgammaevents(Simulation);
+while(!EventHandler.empty()){
+    EventHandler.handleEvents(Simulation,simulationtime);
+     EventHandler.swapqueue();
+       if (simulationtime==100) {
+           break;
+       }
+    simulationtime++;
+}
+}
 int main() {
     NeuralNetwork Simulation;
     string filename = "input2.txt";
     parsefile(Simulation,filename);
     //Simulation.Printclusterinformation(0);
     //Simulation.PrintNeuronList();
-    int simulationtime=0;
-    EventHandler EventHandler;
-    EventHandler.addEvent({1,0});
-    EventHandler.addgammaevents(Simulation);
-    while(!EventHandler.empty()){
-        EventHandler.handleEvents(Simulation,simulationtime);
-        EventHandler.swapqueue();
-           if (simulationtime==1000) {
-               break;
-           }
-        simulationtime++;
-    }
+    filewriter(Simulation,"output.txt");
     return 0;
 
 

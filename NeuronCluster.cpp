@@ -127,8 +127,8 @@ bool NeuronCluster::printAllNeuronInformation(){
 
 STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
     STint temp1;
-    cout << "Neuroncount in cluster:\t " <<Neuroncount_cluster << endl;
-    for (int i=0; i<Neuroncount_cluster;i++) {
+
+    for (int i=0; i<Neurons.size();i++) {
         if (NeuronNumbers[i] == NeuronNumber){
             Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
             temp1= Neurons[i].output(Gammafrequency);
@@ -142,3 +142,12 @@ STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int 
 };
 
 //bool NeuronCluster::StandardCluster9Neurons(){};
+
+double NeuronCluster::GetWeight(int Neuron, int Input) {
+    for(int i =0; i < Neuroncount_cluster; i++){
+        if (Neuron == NeuronNumbers[i]){
+            return Neurons[i].GetWeight(Input);
+        }
+    }
+    return 0;
+}

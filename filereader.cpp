@@ -86,7 +86,6 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                                     second = std::stof(package.substr(commaPos + 1));
                                     first = std::stoi(package.substr(0, commaPos));
                                     temp.push_back({first,second});
-
                                 }
 
 
@@ -147,7 +146,8 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         current_neuron = 0;
         for(int i=0;i<clusterDataRandom.size();i++){
             for(int j=0;j<get<2>(clusterDataRandom[i]);j++){
-                int connections =rand()%neurons_total;
+                int connections =rand()%(neurons_total-1)+1;
+
                 vector<int> temp;
                 for(int k=0;k<connections;k++) {
                     int randomOutput = j;

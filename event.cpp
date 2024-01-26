@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "event.h"
-
+const int MAXNEURON = 20000;
 event::event(){
     delay=0;
     neuronNumber=0;
@@ -39,7 +39,7 @@ void EventHandler::addgammaevents(NeuralNetwork &NNetwork){
     temp = NNetwork.Getallclusters();
     cout << temp.size();
     for(int i=0;i<temp.size();i++){
-        eventqueue.push_back({2147483647-i,get<1>(temp[i])-2});
+        eventqueue.push_back({MAXNEURON+i,get<1>(temp[i])-2});
     }
 }
 
@@ -57,9 +57,9 @@ void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
         else {
             fired = true;
             int eventnumber = eventqueue.back().getneuronNumber();
-            if (eventnumber>2000000000){
+            if (eventnumber>=MAXNEURON){
 
-                int cluster = 2147483647 - eventnumber;
+                int cluster = eventnumber - MAXNEURON;
                 NNetwork.GammaCycle(cluster);
                 newqueue.push_back({eventnumber,NNetwork.GetGammafrequency(cluster)});
                 eventqueue.pop_back();

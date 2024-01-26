@@ -171,6 +171,7 @@ bool NeuralNetwork::Addconnection(int NeuronNumber_1, int NeuronNumber_2, int De
 
     }
     get<2>(NeuronList[output]).push_back(NeuronNumber_2);
+    get<3>(NeuronList[output]) = Delay;
     NeuronClusters[cluster].AddNeuronInput(NeuronNumber_1, NeuronNumber_2, weight_t);
     return temp2;
 }
@@ -193,4 +194,25 @@ bool NeuralNetwork::PrintNeuronList(){
     }
     cout << endl;
     return true;
+};
+
+vector<NeuronCluster> NeuralNetwork::GetSystem() {
+        return NeuronClusters;
+};
+int NeuralNetwork::TotalNeurons() {
+    return Neurons_total;
+}
+
+tuple<int, int,vector<int>,int> NeuralNetwork::GetNeuron(int NeuronNumber) {
+    for (int i=0; i < Neurons_total; i++){
+        if (NeuronNumber == get<0>(NeuronList[i])) {
+            return NeuronList[i];
+        }
+    }
+}
+double NeuralNetwork::GetWeight(int Cluster, int Neuron, int Input) {
+    return NeuronClusters[Cluster].GetWeight(Neuron, Input);
+}
+int NeuralNetwork::GetCluster(int Neuron){
+    return get<1>(NeuronList[Neuron]);
 }

@@ -25,6 +25,7 @@ public:
     bool printNeuronInformation();
     bool UpdateNeuronNumber(int NeuronNumber_t);
     int GetNeuronNumber();
+    double GetWeight(int Input);
     int InputconnectionsSize();
     int OutputconnectionsSize();
     void GammaCycle(bool Gammareset,int Gammafrequency);

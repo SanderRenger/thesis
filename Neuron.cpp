@@ -12,7 +12,7 @@ Neuron::Neuron(int NeuronNumber_t,int gammafrequency_t, double threshold_t,vecto
     NeuronNumber = NeuronNumber_t;
     threshold = threshold_t;
     inputConnections = inputConnections_t;
-    //outputConnections = outputConnections_t;
+     //outputConnections = outputConnections_t;
     outputspiketime = {0, true};
 }
 bool Neuron::UpdateNeuronNumber(int NeuronNumber_t) {
@@ -179,3 +179,13 @@ bool Neuron::printNeuronInformation(){
 return true;
 }
 
+double Neuron::GetWeight(int Input){
+    cout << "Neuron:\t"<< NeuronNumber << endl;
+    for(int i =0; i < inputConnections.size(); i++){
+        if (Input == get<0>(inputConnections[i])){
+            cout <<"weight:\t"<<get<1>(inputConnections[i])<< endl;
+            return get<1>(inputConnections[i]);
+        }
+    }
+    return 0;
+}

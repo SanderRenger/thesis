@@ -27,10 +27,15 @@ public:
     bool PrintNeuronList();
     bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);
     vector<tuple<int,STint>> ActivateNeuron(int NeuronNumber, int current_time);
-    vector<array<int,2>> Getallclusters();
+    vector<NeuronCluster> GetSystem();
+    int GetCluster(int Neuron);
+    tuple<int, int,vector<int>,int> GetNeuron (int NeuronNumber);
     int GetGammafrequency(int ClusterNumber);
     void GammaCycle(int Cluster);
     void AddCluster();
+    int TotalNeurons();
+    vector<array<int,2>> Getallclusters();
+    double GetWeight(int Cluster, int Neuron, int Input);
 };
 
 

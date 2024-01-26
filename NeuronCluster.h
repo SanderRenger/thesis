@@ -26,6 +26,7 @@ public:
     int Neuroncount();
     int GetGammafrequency();
     void DoGammaCycle();
+    double GetWeight(int Neuron, int Input);
 private:
     int Neuroncount_cluster;
     int Gammafrequency;

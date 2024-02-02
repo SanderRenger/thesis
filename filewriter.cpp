@@ -32,7 +32,7 @@ void filewriter(NeuralNetwork &Simulation, string filename){
                 }
                 int temp2 = get<1>(Simulation.GetNeuron(get<2>(Neuron)[k]));
                 //cout << "test:\t" << get<2>(Neuron)[k]<<endl;
-                cout << "Cluster:\t" << i << "\tNeuron:\t" << j << "\tInput:\t" << get<2>(Neuron)[k]<<endl;
+                //cout << "Cluster:\t" << i << "\tNeuron:\t" << j << "\tInput:\t" << get<2>(Neuron)[k]<<endl;
                 double temp3 = Simulation.GetWeight(Simulation.GetCluster(get<2>(Neuron)[k]),get<2>(Neuron)[k],count);
                 //cout << temp3<< endl;
                 file <<get<2>(Neuron)[k]<<","<<temp3<<"}";

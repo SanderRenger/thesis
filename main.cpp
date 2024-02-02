@@ -77,19 +77,19 @@ NeuralNetwork simulation(int simulationnumber){
     return Simulation;
 };
 
-Run(NeuralNetwork &Simulation){
-int simulationtime=0;
-EventHandler EventHandler;
-EventHandler.addEvent({1,0});
-EventHandler.addgammaevents(Simulation);
-while(!EventHandler.empty()){
-    EventHandler.handleEvents(Simulation,simulationtime);
-     EventHandler.swapqueue();
-       if (simulationtime==100) {
-           break;
-       }
-    simulationtime++;
-}
+void Run(NeuralNetwork &Simulation){
+    int simulationtime=0;
+    EventHandler EventHandler;
+    EventHandler.addEvent({1,0});
+    EventHandler.addgammaevents(Simulation);
+    while(!EventHandler.empty()){
+        EventHandler.handleEvents(Simulation,simulationtime);
+         EventHandler.swapqueue();
+           if (simulationtime==1000) {
+               break;
+           }
+        simulationtime++;
+    }
 }
 int main() {
     NeuralNetwork Simulation;
@@ -97,7 +97,10 @@ int main() {
     parsefile(Simulation,filename);
     //Simulation.Printclusterinformation(0);
     //Simulation.PrintNeuronList();
+
     filewriter(Simulation,"output.txt");
+
+    Run(Simulation);
     return 0;
 
 

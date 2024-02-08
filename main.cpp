@@ -93,14 +93,14 @@ void Run(NeuralNetwork &Simulation){
 }
 int main() {
     NeuralNetwork Simulation;
-    string filename = "input2.txt";
+    string filename = "output.txt";
     parsefile(Simulation,filename);
     //Simulation.Printclusterinformation(0);
     //Simulation.PrintNeuronList();
 
     filewriter(Simulation,"output.txt");
 
-    Run(Simulation);
+    //Run(Simulation);
     return 0;
 
 

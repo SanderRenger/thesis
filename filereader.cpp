@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <algorithm>
 
 void parsefile(NeuralNetwork &Simulation,string filename){
     srand ( time(NULL) );
@@ -69,18 +70,24 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                     string package;
                     int first;
                     int delay;
+                    double threshold;
                     double second;
                     vector<tuple<int,double>> temp;
                     neurons_total+=1;
                     while (std::getline(iss, package, '}')) {
                         if (package.size() > 1) {
-
+                            size_t bracketPos = binary_search(package.begin(), package.end(), '{');
                             package = package.substr(package.find('{') + 1);
                             package = package.substr(package.find('{') + 1);// Remove '{'
                             size_t commaPos = package.find(',');
                             // Extract the integer and float values
-                                if (package.substr(0, commaPos).empty()) {
+                            cout << !(package.substr(0, bracketPos).empty()) << endl;
+                                if (!(package.substr(0, bracketPos).empty())) {
+
                                     delay = std::stoi(package.substr(commaPos + 1));
+                                    cout << "delay \t"<< delay << endl;
+                                    threshold = std::stof(package.substr(0, commaPos));
+                                    cout << threshold << endl;
                                 }
                                 else {
                                     second = std::stof(package.substr(commaPos + 1));

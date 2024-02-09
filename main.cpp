@@ -80,7 +80,7 @@ NeuralNetwork simulation(int simulationnumber){
 void Run(NeuralNetwork &Simulation){
     int simulationtime=0;
     EventHandler EventHandler;
-    EventHandler.addEvent({1,0});
+    EventHandler.addEvent({0,0});
     EventHandler.addgammaevents(Simulation);
     while(!EventHandler.empty()){
         EventHandler.handleEvents(Simulation,simulationtime);
@@ -93,14 +93,13 @@ void Run(NeuralNetwork &Simulation){
 }
 int main() {
     NeuralNetwork Simulation;
-    string filename = "output.txt";
+    string filename = "input3.txt";
     parsefile(Simulation,filename);
     //Simulation.Printclusterinformation(0);
     //Simulation.PrintNeuronList();
-
     filewriter(Simulation,"output.txt");
 
-    //Run(Simulation);
+    Run(Simulation);
     return 0;
 
 

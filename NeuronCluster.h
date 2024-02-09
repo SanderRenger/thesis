@@ -13,6 +13,7 @@ public:
     NeuronCluster();
     bool AddNeuron(Neuron Neuron);
     bool AddEmptyNeuron(int NeuronNumber);
+    bool AddEmptyNeuron(int NeuronNumber, double threshold);
     bool RemoveNeuron(int NeuronNumber);
     bool ChangeGammafrequency(int Gammafrequency_t);
     bool printNeuronInformation(int NeuronNumber);
@@ -27,6 +28,7 @@ public:
     int GetGammafrequency();
     void DoGammaCycle();
     double GetWeight(int Neuron, int Input);
+    double GetThreshold(int Neuron);
 private:
     int Neuroncount_cluster;
     int Gammafrequency;

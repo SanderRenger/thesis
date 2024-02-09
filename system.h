@@ -8,6 +8,7 @@
 #include <vector>
 #include <tuple>
 #include <array>
+inline extern const int DELAY = 1;
 class NeuralNetwork {
 private:
     int Neurons_total;
@@ -19,6 +20,7 @@ public:
     bool DeleteNeuron(int NeuronNumber);
     bool DeleteNeuron(int NeuronNumber, int ClusterNumber);
     bool AddNeuron(int ClusterNumber);
+    bool AddNeuron(int ClusterNumber, double threshold);
     bool AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
@@ -36,6 +38,7 @@ public:
     int TotalNeurons();
     vector<array<int,2>> Getallclusters();
     double GetWeight(int Cluster, int Neuron, int Input);
+    double GetThreshold(int Cluster, int Neuron);
 };
 
 

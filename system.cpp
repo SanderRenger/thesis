@@ -24,8 +24,8 @@ vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int cur
     STint temp1;
     vector<tuple<int,STint>> temp2;
     int Neuroncluster = get<1>(NeuronList[NeuronNumber]);
-    vector<int> Outputs = get<2>(NeuronList[NeuronNumber-1]);
-    int delay = get<3>(NeuronList[NeuronNumber-1]);
+    vector<int> Outputs = get<2>(NeuronList[NeuronNumber]);
+    int delay = get<3>(NeuronList[NeuronNumber]);
     for (int i =0; i < Outputs.size();i++) {
         //cout << "cluster\t" << i << endl;
         temp1= NeuronClusters[get<1>(NeuronList[Outputs[i]])].ActivateNeuronInput(Outputs[i],NeuronNumber,current_time);
@@ -212,6 +212,10 @@ tuple<int, int,vector<int>,int> NeuralNetwork::GetNeuron(int NeuronNumber) {
 }
 double NeuralNetwork::GetWeight(int Cluster, int Neuron, int Input) {
     return NeuronClusters[Cluster].GetWeight(Neuron, Input);
+}
+
+double NeuralNetwork::GetThreshold(int Cluster, int Neuron) {
+    return NeuronClusters[Cluster].GetThreshold(Neuron);
 }
 int NeuralNetwork::GetCluster(int Neuron){
     return get<1>(NeuronList[Neuron]);

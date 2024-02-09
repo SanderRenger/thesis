@@ -60,6 +60,15 @@ bool NeuronCluster::AddEmptyNeuron(int NeuronNumber){
     return true;
 }
 
+bool NeuronCluster::AddEmptyNeuron(int NeuronNumber, double threshold){
+    Neuroncount_cluster +=1;
+    NeuronNumbers.push_back(NeuronNumber);
+    Neuron temp;
+    Neurons.push_back(temp);
+    Neurons.back().UpdateNeuronThreshold(threshold);
+    Neurons[Neuroncount_cluster-1].UpdateNeuronNumber(NeuronNumber);
+    return true;
+}
 bool NeuronCluster::RemoveNeuron(int NeuronNumber){
     bool temp = false;
     for(int i=0; i<Neuroncount_cluster;i++){
@@ -147,6 +156,15 @@ double NeuronCluster::GetWeight(int Neuron, int Input) {
     for(int i =0; i < Neuroncount_cluster; i++){
         if (Neuron == NeuronNumbers[i]){
             return Neurons[i].GetWeight(Input);
+        }
+    }
+    return 0;
+}
+
+double NeuronCluster::GetThreshold(int Neuron) {
+    for(int i =0; i < Neuroncount_cluster; i++){
+        if (Neuron == NeuronNumbers[i]){
+            return Neurons[i].GetThreshold();
         }
     }
     return 0;

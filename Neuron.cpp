@@ -70,6 +70,8 @@ STint Neuron::output(int Gammafrequency) {
                //if (NeuronNumber==4){
                //    myfile << output << endl;
                //}
+               //cout << "Neuron\t" << NeuronNumber << "output\t"<< output << endl;
+               //cout << "Weight\t" << weights_t;
            }
 
 
@@ -79,6 +81,7 @@ STint Neuron::output(int Gammafrequency) {
            temp2 = i;
        }
    }
+   //cout << output << endl;
     //if (NeuronNumber==4){
     //    myfile.close();
     //}
@@ -188,4 +191,8 @@ double Neuron::GetWeight(int Input){
         }
     }
     return 0;
+}
+
+double Neuron::GetThreshold() {
+    return threshold;
 }

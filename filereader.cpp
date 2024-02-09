@@ -19,7 +19,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
     }
     vector<tuple<int, float>> neuronData;
     string line;
-    vector<tuple<int, bool,vector<tuple<int,vector<tuple<int,double>>>>>> clusterData;
+    vector<tuple<int, bool,vector<tuple<int,vector<tuple<int,double>>,double>>>> clusterData;
     vector<tuple<int,bool,int>> clusterDataRandom;
     int current_cluster=-1;
     int current_neuron=-1;
@@ -76,20 +76,20 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                     neurons_total+=1;
                     while (std::getline(iss, package, '}')) {
                         if (package.size() > 1) {
-                            size_t bracketPos = binary_search(package.begin(), package.end(), '{');
+                            bool bracketPos = (find(package.begin(), package.end(), '{') != package.end());
                             package = package.substr(package.find('{') + 1);
                             package = package.substr(package.find('{') + 1);// Remove '{'
                             size_t commaPos = package.find(',');
                             // Extract the integer and float values
-                            cout << !(package.substr(0, bracketPos).empty()) << endl;
-                                if (!(package.substr(0, bracketPos).empty())) {
+                                if (!bracketPos) {
+                                    package = package.substr(package.find(',') + 1);
+                                    size_t commaPos = package.find(',');
+                                    threshold = std::stof(package.substr(commaPos + 1));
+                                    delay = std::stof(package.substr(0, commaPos));
 
-                                    delay = std::stoi(package.substr(commaPos + 1));
-                                    cout << "delay \t"<< delay << endl;
-                                    threshold = std::stof(package.substr(0, commaPos));
-                                    cout << threshold << endl;
                                 }
                                 else {
+                                    //cout << package << endl;
                                     second = std::stof(package.substr(commaPos + 1));
                                     first = std::stoi(package.substr(0, commaPos));
                                     temp.push_back({first,second});
@@ -98,7 +98,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
 
                         }
                     }
-                    get<2>(clusterData[current_cluster]).push_back({delay,temp});
+                    get<2>(clusterData[current_cluster]).push_back({delay,temp,threshold});
                 }
                 else{
 
@@ -168,7 +168,8 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                         }
                     }
                     double randomweight = (double) (rand() % 100) / 100;
-                    int randomdelay = rand() % 100;
+                    int randomdelay = rand() % DELAY;
+
                     temp.push_back(randomOutput);
                     Simulation.Addconnection(j, randomOutput, randomdelay, randomweight);
                 }
@@ -176,11 +177,14 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         }
     }
     else {
+        int temp=0;
         for(int i=0;i<clusterData.size();i++){
             Simulation.AddCluster();
             Simulation.UpdateGammaFrequency(i,get<0>(clusterData[i]));
             for(int j=0;j<get<2>(clusterData[i]).size();j++){
                 Simulation.AddNeuron(i);
+                Simulation.UpdateThreshold(temp,get<2>(get<2>(clusterData[i])[j]));
+                temp++;
             }
         }
         current_neuron =0;

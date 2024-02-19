@@ -40,43 +40,45 @@ Neuron::Neuron(){
     //outputConnections.push_back({0,0});
 }
 
-STint Neuron::output(int Gammafrequency) {
-    bool temp = false;
-    int temp2;
+STint Neuron::output(int Gammafrequency,int neuroninput) {
+   bool firstspike = false;
+   if(spiketrains.size() != Gammafrequency){
+       firstspike = true;
+       spiketrains.resize(Gammafrequency);
+       fill(spiketrains.begin(),spiketrains.end(),0);
+   }
+   bool temp = false;
+   int temp2;
    double output=0;
+   double slope=0;
    double weights_t;
    STint Spiketime_t;
    // ofstream myfile;
    //if (NeuronNumber == 4){
    //   myfile.open ("log1.txt");
    //}
-
+   //cout << inputConnections.size() << endl;
+   //cout << "neuron\t"<< neuroninput<< "time\t"<< get<2>(inputConnections[neuroninput]).get_int() << endl;
    for(int i=0;i< Gammafrequency;i++){
-       for(int j=0;j<inputConnections.size();j++){
-
-           weights_t =get<1>(inputConnections[j]);
-           Spiketime_t =get<2>(inputConnections[j]);
+           weights_t =get<1>(inputConnections[neuroninput]);
+           Spiketime_t =get<2>(inputConnections[neuroninput]);
            if (!Spiketime_t.get_bool()){
                if (i >= Spiketime_t.get_int()){
                    if(i< Spiketime_t.get_int()+10){
-                       output += ((double)1/(double)10)*weights_t;
+                       slope = ((double)1/(double)10)*weights_t;
                    }
-
-                   if(i>= Spiketime_t.get_int()+10){
-                       output -=((double)1/(double)(Gammafrequency-(Spiketime_t.get_int()+10)))*weights_t;
+                   else if(i>= Spiketime_t.get_int()+10){
+                       slope =-((double)1/(double)(Gammafrequency-(Spiketime_t.get_int()+10)))*weights_t;
                    }
-
+                   else {
+                       slope =0;
+                   }
                }
-               //if (NeuronNumber==4){
-               //    myfile << output << endl;
-               //}
-               //cout << "Neuron\t" << NeuronNumber << "output\t"<< output << endl;
-               //cout << "Weight\t" << weights_t;
+               output += slope;
+               spiketrains[i] = spiketrains[i] + output;
+               //cout << "spiketrain:\t"<< spiketrains[i] << endl;
            }
-
-
-       }
-       if (output >= threshold){
+       if (spiketrains[i] >= threshold){
            temp = true;
            temp2 = i;
        }
@@ -91,15 +93,17 @@ STint Neuron::output(int Gammafrequency) {
     return {0,true};
 }
 
-bool Neuron::UpdateNeuronInputSpiketime(int Neuronnumber_t, int current_time){
+int Neuron::UpdateNeuronInputSpiketime(int Neuronnumber_t, int current_time){
     //cout <<NeuronNumber<<"\t" <<Neuronnumber_t<< endl;
     for(int i=0; i<inputConnections.size();i++){
         if (Neuronnumber_t == get<0>(inputConnections[i]) ){
+            //cout <<"updated\t" << Neuronnumber_t << endl;
             get<2>(inputConnections[i])  = {current_time,false};
-            return true;
+            //cout << "test\t" << get<2>(inputConnections[i]).get_int() << "index\t" << i<<  endl;
+            return i;
         }
     }
-    return false;
+    return 0;
 };
 
 void Neuron::AddNeuronInput(int Neuronnumber,double weight){
@@ -128,6 +132,7 @@ bool Neuron::RemoveNeuronInput(int Neuronnumber){
 };
 
 void Neuron::GammaCycle(bool Gammareset,int Gammafrequency) {
+    fill(spiketrains.begin(),spiketrains.end(),0);
     for (int i =0;i<inputConnections.size();i++){
         if (!get<2>(inputConnections[i]).get_bool()){
             if (Gammareset){ //reset or put old spike in negative gammacycle time

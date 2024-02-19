@@ -14,8 +14,8 @@ class Neuron {
 public:
     Neuron(int NeuronNumber_t,int gammafrequency_t, double threshold_t,vector<tuple<int,double,STint>> inputConnections_t);
     Neuron();
-    STint output(int Gammafrequency);
-    bool UpdateNeuronInputSpiketime(int Neuronnumber, int current_time);
+    STint output(int Gammafrequency,int neuroninput);
+    int UpdateNeuronInputSpiketime(int Neuronnumber, int current_time);
     bool UpdateNeuronInputWeight(int Neuronnumber,int Weights);
     void AddNeuronInput(int Neuronnumber, double weight);
     bool RemoveNeuronInput(int Neuronnumber);
@@ -31,6 +31,7 @@ public:
     int OutputconnectionsSize();
     void GammaCycle(bool Gammareset,int Gammafrequency);
 private:
+    vector<double> spiketrains;
     int NeuronNumber;
     STint outputspiketime;
     double threshold;

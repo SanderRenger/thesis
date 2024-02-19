@@ -136,11 +136,12 @@ bool NeuronCluster::printAllNeuronInformation(){
 
 STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
     STint temp1;
-
+    int temp;
     for (int i=0; i<Neurons.size();i++) {
         if (NeuronNumbers[i] == NeuronNumber){
-            Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
-            temp1= Neurons[i].output(Gammafrequency);
+            //cout << "time"<< current_time%Gammafrequency << endl;
+            temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
+            temp1= Neurons[i].output(Gammafrequency,temp);
             if (!temp1.get_bool()){
                 temp1 = {(temp1.get_int()-current_time%Gammafrequency),false};
             }

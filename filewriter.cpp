@@ -43,7 +43,7 @@ void filewriter(NeuralNetwork &Simulation, string filename){
 
             double temp4 = Simulation.GetThreshold(Simulation.GetCluster(j),count);
 
-            cout << temp4 << endl;
+            //cout << temp4 << endl;
             file <<","<< get<3>(Neuron)<<","<<temp4<<"}"<<endl;
             count++;
 

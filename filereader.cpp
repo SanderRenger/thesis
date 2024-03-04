@@ -21,10 +21,11 @@ void parsefile(NeuralNetwork &Simulation,string filename){
     string line;
     vector<tuple<int, bool,vector<tuple<int,vector<tuple<int,double>>,double>>>> clusterData;
     vector<tuple<int,bool,int>> clusterDataRandom;
+    vector<tuple<int,int,int>> clusterDataFull;
     int current_cluster=-1;
     int current_neuron=-1;
     int neurons_total=0;
-    bool mode = false;
+    int mode;
     while (getline(file,line)) {
         std::istringstream iss(line);
         std::string key;
@@ -40,7 +41,41 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                 size_t BracketPos = package.find('}');
                 mode = std::stoi(package.substr(0, BracketPos));
             }
-            if (mode==1){
+            if(mode==0) {
+                if (key == "Cluster") {
+                    current_cluster +=1;
+                    size_t startPos = line.find("Cluster:") + 8;
+                    string data = line.substr(startPos);
+                    istringstream iss(data);
+                    string package;
+                    int first;
+                    int Neurons;
+                    bool second;
+                    vector<tuple<int,bool,int>> temp;
+                    // Split into individual packages
+                    while (std::getline(iss, package, '}')) {
+                        if (package.size() > 1) {
+                            package = package.substr(package.find('{') + 1); // Remove '{'
+                            package = package.substr(package.find('{') + 1); // Remove '{'
+                            size_t commaPos = package.find(',');
+                            // Extract the integer and float values
+                            if (package.substr(0, commaPos).empty()) {
+                                Neurons = std::stoi(package.substr(commaPos + 1));
+                            }
+                            else {
+                                second = std::stof(package.substr(commaPos + 1));
+                                first = std::stoi(package.substr(0, commaPos));
+
+                            }
+                        }
+                    }
+                    neurons_total += Neurons;
+                    clusterDataRandom.push_back({first,second,Neurons});
+                } else{
+
+                }
+            }
+            else if (mode==1){
                 if (key == "Cluster") {
                     current_cluster +=1;
                     size_t startPos = line.find("Cluster:") + 8;
@@ -103,7 +138,8 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                 else{
 
                 }
-            } else {
+            }
+            else if(mode==2){
                 if (key == "Cluster") {
                     current_cluster +=1;
                     size_t startPos = line.find("Cluster:") + 8;
@@ -111,9 +147,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                     istringstream iss(data);
                     string package;
                     int first;
-                    int Neurons;
-                    bool second;
-                    vector<tuple<int,bool,int>> temp;
+                    int second;
+                    int Gammafrequency;
+
                     // Split into individual packages
                     while (std::getline(iss, package, '}')) {
                         if (package.size() > 1) {
@@ -122,7 +158,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                             size_t commaPos = package.find(',');
                             // Extract the integer and float values
                             if (package.substr(0, commaPos).empty()) {
-                                Neurons = std::stoi(package.substr(commaPos + 1));
+                                Gammafrequency = std::stoi(package.substr(commaPos + 1));
                             }
                             else {
                                 second = std::stof(package.substr(commaPos + 1));
@@ -131,8 +167,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                             }
                         }
                     }
-                    neurons_total += Neurons;
-                    clusterDataRandom.push_back({first,second,Neurons});
+                    neurons_total += first * second;
+                    clusterDataFull.push_back({first,second,Gammafrequency});
+
                 } else{
 
                 }
@@ -176,7 +213,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             }
         }
     }
-    else {
+    else if(mode==1) {
         int temp=0;
         for(int i=0;i<clusterData.size();i++){
             Simulation.AddCluster();
@@ -198,6 +235,33 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                 }
                 current_neuron+=1;
             }
+        }
+    }
+    else if (mode==2){
+        int temp=0;
+        for(int i=0;i<clusterDataFull.size();i++){
+            Simulation.AddCluster();
+            Simulation.UpdateGammaFrequency(i,get<2>(clusterDataFull[i]));
+            for(int j=0;j<(get<0>(clusterDataFull[i])*get<1>(clusterDataFull[i]));j++){
+                Simulation.AddNeuron(i);
+                Simulation.UpdateThreshold(temp,10);
+                temp++;
+            }
+        }
+        int lower= 0;
+        int upper=0;
+        for(int i=1;i<clusterDataFull.size();i++){
+
+            upper +=(get<0>(clusterDataFull[i-1])*get<1>(clusterDataFull[i-1]));
+
+            for(int j=0; j<(get<0>(clusterDataFull[i])*get<1>(clusterDataFull[i]));j++){
+                for(int k=0; k<(get<0>(clusterDataFull[i-1])*get<1>(clusterDataFull[i-1]));k++){
+                    Simulation.Addconnection(k+lower,j+upper,0,(double) (rand() % 100) / 100);
+
+                }
+            }
+            lower = upper;
+
         }
     }
 

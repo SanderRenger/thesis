@@ -96,10 +96,10 @@ int main() {
     string filename = "input2.txt";
     parsefile(Simulation,filename);
     //Simulation.Printclusterinformation(0);
-    //Simulation.PrintNeuronList();
+    Simulation.PrintNeuronList();
     filewriter(Simulation,"output.txt");
 
-    Run(Simulation);
+    //Run(Simulation);
     return 0;
 
 

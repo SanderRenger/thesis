@@ -1,2 +1,4 @@
-Mode: {0}
-Cluster: {{100,1},300}
+Mode: {2}
+Cluster: {{34,34},100}
+Cluster: {{512,1},100}
+Cluster: {{10,1},100}

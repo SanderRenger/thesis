@@ -88,7 +88,6 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                             package = package.substr(package.find('{') + 1); // Remove '{'
                             size_t commaPos = package.find(',');
                             // Extract the integer and float values
-
                             int first = std::stoi(package.substr(0, commaPos));
                             bool second = std::stoi(package.substr(commaPos + 1));
                             clusterData.push_back({first, second, {}});
@@ -125,9 +124,12 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                                 }
                                 else {
                                     //cout << package << endl;
-                                    second = std::stof(package.substr(commaPos + 1));
-                                    first = std::stoi(package.substr(0, commaPos));
-                                    temp.push_back({first,second});
+                                    if (package.size()!=0){
+                                        second = std::stof(package.substr(commaPos + 1));
+                                        first = std::stoi(package.substr(0, commaPos));
+                                        temp.push_back({first,second});
+                                        //cout << first << "\t" << second << endl;
+                                    }
                                 }
 
 
@@ -157,6 +159,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                             package = package.substr(package.find('{') + 1); // Remove '{'
                             size_t commaPos = package.find(',');
                             // Extract the integer and float values
+
                             if (package.substr(0, commaPos).empty()) {
                                 Gammafrequency = std::stoi(package.substr(commaPos + 1));
                             }

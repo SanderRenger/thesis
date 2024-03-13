@@ -220,3 +220,27 @@ double NeuralNetwork::GetThreshold(int Cluster, int Neuron) {
 int NeuralNetwork::GetCluster(int Neuron){
     return get<1>(NeuronList[Neuron]);
 }
+
+void NeuralNetwork::UpdateWeightdataset(string filename1,string filename2) {
+    std::string path {filename1};
+    npy::npy_data d = npy::read_npy<double>(path);
+
+    std::vector<double> data = d.data;
+    std::vector<unsigned long> shape = d.shape;
+    int rows = d.shape[1];
+    int sizelayer1 = rows;
+    cout << sizelayer1 << endl;
+       for (int i=0;i<data.size();i++){
+            NeuronClusters[1].UpdateWeightDataset(int(i/rows),i%rows,data[i]);
+    }
+    path = filename2;
+    d = npy::read_npy<double>(path);
+
+    data = d.data;
+       rows = d.shape[1];
+    cout << rows << endl;
+    cout << data.size() << endl;
+    for (int i=0;i<data.size();i++){
+        NeuronClusters[2].UpdateWeightDataset(int(i/rows),i%rows+sizelayer1,data[i]);
+    }
+}

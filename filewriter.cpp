@@ -40,7 +40,9 @@ void filewriter(NeuralNetwork &Simulation, string filename){
                 file <<get<2>(Neuron)[k]<<","<<temp3<<"}";
 
             }
-
+            if (get<2>(Neuron).empty()){
+                file <<"}";
+            }
             double temp4 = Simulation.GetThreshold(Simulation.GetCluster(j),count);
 
             //cout << temp4 << endl;

@@ -170,3 +170,7 @@ double NeuronCluster::GetThreshold(int Neuron) {
     }
     return 0;
 }
+
+void NeuronCluster::UpdateWeightDataset(int Neuron_in, int Neuron_out,double Weight){
+            Neurons[Neuron_in].UpdateNeuronInputWeight(Neuron_out,Weight);
+}

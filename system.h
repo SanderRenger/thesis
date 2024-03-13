@@ -8,6 +8,7 @@
 #include <vector>
 #include <tuple>
 #include <array>
+#include "npy.hpp"
 inline extern const int DELAY = 1;
 class NeuralNetwork {
 private:
@@ -39,7 +40,10 @@ public:
     vector<array<int,2>> Getallclusters();
     double GetWeight(int Cluster, int Neuron, int Input);
     double GetThreshold(int Cluster, int Neuron);
+    void UpdateWeightdataset(string filename1,string filename2);
+
 };
+
 
 
 #endif //THESIS_NEURONLIST_H

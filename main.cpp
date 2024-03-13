@@ -2,6 +2,8 @@
 #include <math.h>
 #include <vector>
 #include <iostream>
+#include <vector>
+#include <string>
 #include <fstream>
 #include "Neuron.h"
 #include "event.h"
@@ -11,6 +13,9 @@
 #include "system.h"
 #include "filereader.h"
 #include "filewriter.h"
+#include "TimeData.h"
+
+#include "npy.hpp"
 //int gammafrequency, double threshold,std::vector<double> inputs,std::vector<double> weights,std::vector<STint> inputspiketime
 using namespace std;
 
@@ -77,15 +82,14 @@ NeuralNetwork simulation(int simulationnumber){
     return Simulation;
 };
 
-void Run(NeuralNetwork &Simulation){
+void Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
     int simulationtime=0;
-    EventHandler EventHandler;
-    EventHandler.addEvent({0,0});
+
     EventHandler.addgammaevents(Simulation);
     while(!EventHandler.empty()){
         EventHandler.handleEvents(Simulation,simulationtime);
          EventHandler.swapqueue();
-           if (simulationtime==1000) {
+           if (simulationtime==1000000) {
                break;
            }
         simulationtime++;
@@ -93,14 +97,18 @@ void Run(NeuralNetwork &Simulation){
 }
 int main() {
     NeuralNetwork Simulation;
-    string filename = "input2.txt";
+    string filename = "input4.txt";
     parsefile(Simulation,filename);
-    //Simulation.Printclusterinformation(0);
-    Simulation.PrintNeuronList();
-    filewriter(Simulation,"output.txt");
-
-    //Run(Simulation);
+    string path1 { "layer1.npy"};
+    string path2 {"layer2.npy"};
+    Simulation.UpdateWeightdataset(path1, path2);
+      filewriter(Simulation,"output.txt");
+//    //Simulation.Printclusterinformation(1);
+//    TimeData TD;
+//    TD = Read_Ndataset("NMNISTsmall/1.bs2");
+//     EventHandler EventHandler;
+//    EventHandler.createevents(TD,{34,34});
+    //EventHandler.printqueue();
+    //Run(Simulation,EventHandler);
     return 0;
-
-
 }

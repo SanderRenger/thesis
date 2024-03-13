@@ -16,7 +16,7 @@ public:
     Neuron();
     STint output(int Gammafrequency,int neuroninput);
     int UpdateNeuronInputSpiketime(int Neuronnumber, int current_time);
-    bool UpdateNeuronInputWeight(int Neuronnumber,int Weights);
+    bool UpdateNeuronInputWeight(int Neuronnumber,double Weights);
     void AddNeuronInput(int Neuronnumber, double weight);
     bool RemoveNeuronInput(int Neuronnumber);
     void UpdateNeuronThreshold(double threshold_t);

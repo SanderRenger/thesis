@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 project(thesis)
-
+include_directories(NumCpp)
 set(CMAKE_CXX_STANDARD 17)
 MATH(EXPR stack_size "1024 * 1024 * 1024") # 16 Mb
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,--stack,${stack_size}")
@@ -19,5 +19,6 @@ add_executable(thesis main.cpp
         filereader.h
         filewriter.cpp
         filewriter.h
-
+        TimeData.cpp
+        TimeData.h
 )

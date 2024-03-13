@@ -9,11 +9,12 @@
 #include <vector>
 #include <tuple>
 #include <array>
+#include "TimeData.h"
 
 class event {
 private:
     int neuronNumber;
-    int delay;
+    double delay;
 public:
     int getneuronNumber();
     int getdelay();
@@ -26,7 +27,9 @@ class EventHandler{
 private:
     vector<event> eventqueue;
     vector<event> newqueue;
+    int total_events;
 public:
+    EventHandler();
     void addgammaevents(NeuralNetwork &NNetwork);
     void addEvent(const event& event_t);
     void handleEvents(NeuralNetwork &NNetwork,int current_time);
@@ -34,7 +37,7 @@ public:
     void printnewqueue();
     void swapqueue();
     bool empty();
-
+    void createevents(TimeData TD, array<int,2> format);
 
 };
 

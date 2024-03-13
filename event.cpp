@@ -34,6 +34,10 @@ void EventHandler::addEvent(const event &event_t) {
     eventqueue.push_back(event_t);
 }
 
+EventHandler::EventHandler() {
+    total_events=0;
+}
+
 void EventHandler::addgammaevents(NeuralNetwork &NNetwork){
     vector<array<int,2>> temp;
     temp = NNetwork.Getallclusters();
@@ -71,18 +75,21 @@ void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
                         eventqueue.erase(eventqueue.begin() + i);
                     }
                 }
-                cout << "Neuron event:\t" << current_neuron.getneuronNumber() << "\ttime:\t" << current_time << endl;
+                //cout << "Neuron event:\t" << current_neuron.getneuronNumber() << "\ttime:\t" << current_time << endl;
                 temp = NNetwork.ActivateNeuron(current_neuron.getneuronNumber(), current_time);
                 for (int i = 0; i < temp.size(); i++) {
                     newqueue.push_back({get<0>(temp[i]), get<1>(temp[i]).get_int()});
                 }
                 eventqueue.pop_back();}
-
+                total_events++;
+                if (total_events%100==0){
+                    cout << "total of:\t" << total_events <<"\t events" << endl;
+                }
 
         }
     }
     if (fired){
-        cout<<endl;
+        //cout<<endl;
     }
 }
 
@@ -112,3 +119,10 @@ bool EventHandler::empty() {
     return eventqueue.empty();
 }
 
+void EventHandler::createevents(TimeData TD, array<int,2> format) {
+
+    for(int i =0;i<TD.x.size();i++){
+        event event_t = {(TD.x[i]+TD.y[i]*format[1])*(TD.p[i]),TD.ts[i]};
+        eventqueue.push_back(event_t);
+    }
+}

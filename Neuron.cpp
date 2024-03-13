@@ -152,13 +152,14 @@ void Neuron::GammaCycle(bool Gammareset,int Gammafrequency) {
         }
     }
 }
-bool Neuron::UpdateNeuronInputWeight(int Neuronnumber,int Weights){
+bool Neuron::UpdateNeuronInputWeight(int Neuronnumber,double Weights){
     for(int i=0; i<inputConnections.size();i++){
         if (Neuronnumber == get<0>(inputConnections[i])){
             get<1>(inputConnections[i]) = Weights;
             return true;
         }
     }
+    cout << "oops" << endl;
     return false;
 };
 

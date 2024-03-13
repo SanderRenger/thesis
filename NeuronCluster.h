@@ -29,6 +29,7 @@ public:
     void DoGammaCycle();
     double GetWeight(int Neuron, int Input);
     double GetThreshold(int Neuron);
+    void UpdateWeightDataset(int Neuron_in, int Neuron_out,double Weight);
 private:
     int Neuroncount_cluster;
     int Gammafrequency;

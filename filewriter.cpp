@@ -24,7 +24,9 @@ void filewriter(NeuralNetwork &Simulation, string filename){
         vector<int> temp = system[i].GetNeurons();
         for (int j = 0; j < system[i].Neuroncount(); j++) {
             tuple<int, int, vector<int>, int> Neuron = Simulation.GetNeuron(count);
-
+            if (j%100==0&&j!=0) {
+                cout << "Neurons written to file:\t" << j << endl;
+            }
             file << "Neuron: {{";
 
             for (int k =0; k < get<2>(Neuron).size();k++) {
@@ -43,12 +45,12 @@ void filewriter(NeuralNetwork &Simulation, string filename){
             if (get<2>(Neuron).empty()){
                 file <<"}";
             }
-            double temp4 = Simulation.GetThreshold(Simulation.GetCluster(j),count);
-
+            double temp4 = Simulation.GetThreshold(Simulation.GetCluster(count),count);
             //cout << temp4 << endl;
             file <<","<< get<3>(Neuron)<<","<<temp4<<"}"<<endl;
             count++;
 
         }
     }
+    cout << "Done writing the file "<<endl;
 }

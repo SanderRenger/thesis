@@ -47,7 +47,7 @@ STint Neuron::output(int Gammafrequency,int neuroninput) {
        spiketrains.resize(Gammafrequency);
        fill(spiketrains.begin(),spiketrains.end(),0);
    }
-   bool temp = false;
+   bool out = false;
    int temp2;
    double output=0;
    double slope=0;
@@ -60,26 +60,35 @@ STint Neuron::output(int Gammafrequency,int neuroninput) {
    //cout << inputConnections.size() << endl;
    //cout << "neuron\t"<< neuroninput<< "time\t"<< get<2>(inputConnections[neuroninput]).get_int() << endl;
    for(int i=0;i< Gammafrequency;i++){
+       if (NeuronNumber==2312&&spiketrains[i]>0){
+           //cout <<"output of Neuron: " << NeuronNumber <<" = "<<spiketrains[i] << "\ttime:"<<i<<endl;
+       }
+
            weights_t =get<1>(inputConnections[neuroninput]);
            Spiketime_t =get<2>(inputConnections[neuroninput]);
            if (!Spiketime_t.get_bool()){
                if (i >= Spiketime_t.get_int()){
-                   if(i< Spiketime_t.get_int()+10){
-                       slope = ((double)1/(double)10)*weights_t;
+                   if(i< Spiketime_t.get_int()+1){
+                       slope = ((double)1/(double)1)*weights_t;
                    }
-                   else if(i>= Spiketime_t.get_int()+10){
-                       slope =-((double)1/(double)(Gammafrequency-(Spiketime_t.get_int()+10)))*weights_t;
+                   else if(i< Spiketime_t.get_int()+3000){
+                       slope = 0;
+                   }
+                   else if((i<Spiketime_t.get_int()+4000)){
+                       slope =-((double)1/(double)1000)*weights_t;;
                    }
                    else {
-                       slope =0;
+                       slope = 0;
                    }
+
                }
                output += slope;
                spiketrains[i] = spiketrains[i] + output;
                //cout << "spiketrain:\t"<< spiketrains[i] << endl;
            }
        if (spiketrains[i] >= threshold){
-           temp = true;
+
+           out= true;
            temp2 = i;
        }
    }
@@ -87,7 +96,8 @@ STint Neuron::output(int Gammafrequency,int neuroninput) {
     //if (NeuronNumber==4){
     //    myfile.close();
     //}
-    if (temp){
+    if (out){
+        //cout << "Neuron: \t" << NeuronNumber << "fired" << endl;
         return {temp2,false};
     }
     return {0,true};

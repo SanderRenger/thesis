@@ -44,6 +44,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             if(mode==0) {
                 if (key == "Cluster") {
                     current_cluster +=1;
+                    cout << "Clusters found:\t" << current_cluster+1<< endl;
                     size_t startPos = line.find("Cluster:") + 8;
                     string data = line.substr(startPos);
                     istringstream iss(data);
@@ -78,6 +79,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             else if (mode==1){
                 if (key == "Cluster") {
                     current_cluster +=1;
+                    cout << "Clusters found:\t" << current_cluster+1<< endl;
                     size_t startPos = line.find("Cluster:") + 8;
                     string data = line.substr(startPos);
                     istringstream iss(data);
@@ -98,6 +100,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
                     }
                 }  else if (key == "Neuron") {
                     current_neuron +=1;
+                    if (current_neuron%100==0&&current_neuron!=0) {
+                        cout << "Neurons found:\t" << current_neuron << endl;
+                    }
                     size_t startPos = line.find("Neuron:") + 8;
                     string data = line.substr(startPos);
                     istringstream iss(data);
@@ -144,6 +149,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             else if(mode==2){
                 if (key == "Cluster") {
                     current_cluster +=1;
+                    cout << "Clusters found:\t" << current_cluster+1<< endl;
                     size_t startPos = line.find("Cluster:") + 8;
                     string data = line.substr(startPos);
                     istringstream iss(data);
@@ -184,9 +190,13 @@ void parsefile(NeuralNetwork &Simulation,string filename){
     if(mode == 0){
         for(int i=0;i<clusterDataRandom.size();i++){
             Simulation.AddCluster();
+            cout << "Clusters created:\t" << i+1<< endl;
             Simulation.UpdateGammaFrequency(i,get<0>(clusterDataRandom[i]));
             for(int j=0;j<get<2>(clusterDataRandom[i]);j++){
                 Simulation.AddNeuron(i);
+                if (j%100==0&&j!=0) {
+                    cout << "Neurons created:\t" << j << endl;
+                }
                 Simulation.UpdateThreshold(j,(double)(rand()%100)/100);
             }
         }
@@ -194,7 +204,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         for(int i=0;i<clusterDataRandom.size();i++){
             for(int j=0;j<get<2>(clusterDataRandom[i]);j++){
                 int connections =rand()%(neurons_total-1)+1;
-
+                if (j%100==0&&j!=0) {
+                    cout << "Connections for neuron created:\t" << j << endl;
+                }
                 vector<int> temp;
                 for(int k=0;k<connections;k++) {
                     int randomOutput = j;
@@ -220,9 +232,13 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         int temp=0;
         for(int i=0;i<clusterData.size();i++){
             Simulation.AddCluster();
+            cout << "Clusters created:\t" << i<< endl;
             Simulation.UpdateGammaFrequency(i,get<0>(clusterData[i]));
             for(int j=0;j<get<2>(clusterData[i]).size();j++){
                 Simulation.AddNeuron(i);
+                if (j%100==0&&j!=0) {
+                    cout << "Neurons created:\t" << j << endl;
+                }
                 Simulation.UpdateThreshold(temp,get<2>(get<2>(clusterData[i])[j]));
                 temp++;
             }
@@ -231,7 +247,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         for(int i=0;i<clusterData.size();i++){
 
             for(int j=0;j<get<2>(clusterData[i]).size();j++){
-
+                if (j%100==0&&j!=0) {
+                    cout << "Connections for neuron created:\t" << j << endl;
+                }
                 for(int k=0; k<get<1>(get<2>(clusterData[i])[j]).size();k++){
                     //cout << current_neuron<<" \t" <<get<0>(get<1>(get<2>(clusterData[i])[j])[k])<<" \t" <<get<0>(get<2>(clusterData[i])[j])<<" \t" <<get<1>(get<1>(get<2>(clusterData[i])[j])[k])<<endl;
                     Simulation.Addconnection(current_neuron,get<0>(get<1>(get<2>(clusterData[i])[j])[k]),get<0>(get<2>(clusterData[i])[j]),get<1>(get<1>(get<2>(clusterData[i])[j])[k]));
@@ -244,8 +262,12 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         int temp=0;
         for(int i=0;i<clusterDataFull.size();i++){
             Simulation.AddCluster();
+            cout << "Clusters created:\t" << i<< endl;
             Simulation.UpdateGammaFrequency(i,get<2>(clusterDataFull[i]));
             for(int j=0;j<(get<0>(clusterDataFull[i])*get<1>(clusterDataFull[i]));j++){
+                if (j%100==0&&j!=0) {
+                    cout << "Neurons created:\t" << j << endl;
+                }
                 Simulation.AddNeuron(i);
                 Simulation.UpdateThreshold(temp,10);
                 temp++;
@@ -258,6 +280,9 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             upper +=(get<0>(clusterDataFull[i-1])*get<1>(clusterDataFull[i-1]));
 
             for(int j=0; j<(get<0>(clusterDataFull[i])*get<1>(clusterDataFull[i]));j++){
+                if (j%100==0&&j!=0) {
+                    cout << "Connections for neuron created:\t" << j << endl;
+                }
                 for(int k=0; k<(get<0>(clusterDataFull[i-1])*get<1>(clusterDataFull[i-1]));k++){
                     Simulation.Addconnection(k+lower,j+upper,0,(double) (rand() % 100) / 100);
 
@@ -268,7 +293,7 @@ void parsefile(NeuralNetwork &Simulation,string filename){
         }
     }
 
-
+    cout << "done loading the network" << endl;
 }
 
 /*Mode: true

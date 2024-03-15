@@ -99,16 +99,17 @@ int main() {
     NeuralNetwork Simulation;
     string filename = "input4.txt";
     parsefile(Simulation,filename);
-    string path1 { "layer1.npy"};
-    string path2 {"layer2.npy"};
-    Simulation.UpdateWeightdataset(path1, path2);
-      filewriter(Simulation,"output.txt");
-//    //Simulation.Printclusterinformation(1);
-//    TimeData TD;
-//    TD = Read_Ndataset("NMNISTsmall/1.bs2");
-//     EventHandler EventHandler;
-//    EventHandler.createevents(TD,{34,34});
-    //EventHandler.printqueue();
-    //Run(Simulation,EventHandler);
-    return 0;
+
+//    string path1 { "layer1.npy"};
+//    string path2 {"layer2.npy"};
+//    Simulation.UpdateWeightdataset(path1, path2);
+    //Simulation.Printclusterinformation(1);
+   EventHandler EventHandler;
+   EventHandler.createevents("60001.bs2", {34,34});
+//   EventHandler.printqueue();
+//Simulation.Printclusterinformation(2);
+   //filewriter(Simulation,"output.txt");
+   Run(Simulation,EventHandler);
+
+   return 0;
 }

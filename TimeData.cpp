@@ -21,13 +21,19 @@ TimeData Read_Ndataset(const std::string& filename) {
 
     int numEvents = fileSize / 5; // Assuming each event is 5 bytes
 
-    for (int i = 0; i < numEvents; ++i) {
+    for (int i = 0; i <numEvents; ++i) {
         TD.x.push_back((evtStream[i * 5]) + 1);
         TD.y.push_back((evtStream[(i * 5) + 1]) + 1);
-        TD.p.push_back((((evtStream[i * 5 + 2] >> 7) & 1) + 1));
-        TD.ts.push_back((((evtStream[i * 5 + 2]) & 127) << 16));
-        TD.ts.back() += ((evtStream[i * 5 + 3]) << 8);
-        TD.ts.back() += (evtStream[i * 5 + 4]);
+        unsigned char p = evtStream[i*5+2];
+        TD.p.push_back((p>>7)+1);
+        unsigned char ts1=evtStream[i*5+2];
+        unsigned char ts2=evtStream[i*5+3];
+        unsigned char ts3=evtStream[i*5+4];
+        TD.ts1.push_back(((ts1)&127)<<16);
+        TD.ts2.push_back((ts2)<<8);
+        TD.ts3.push_back(ts3);
+        TD.ts.push_back(TD.ts1.back()+TD.ts2.back()+TD.ts3.back());
+        //std::cout << sizeof(evtStream[i]) << std::endl;
     }
 
     return TD;

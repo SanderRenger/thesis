@@ -30,6 +30,7 @@ vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int cur
         //cout << "cluster\t" << i << endl;
         temp1= NeuronClusters[get<1>(NeuronList[Outputs[i]])].ActivateNeuronInput(Outputs[i],NeuronNumber,current_time);
         if (!temp1.get_bool()){
+            //cout << "outputs\t=" << Outputs[i] << "delay\t"<< delay << endl;
                temp2.push_back({Outputs[i],temp1.add_constant(delay)});
         }
     }

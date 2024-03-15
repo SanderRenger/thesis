@@ -10,7 +10,7 @@
 #include <tuple>
 #include <array>
 #include "TimeData.h"
-
+#include "TimeData.h"
 class event {
 private:
     int neuronNumber;
@@ -28,6 +28,7 @@ private:
     vector<event> eventqueue;
     vector<event> newqueue;
     int total_events;
+    int queuesize;
 public:
     EventHandler();
     void addgammaevents(NeuralNetwork &NNetwork);
@@ -37,7 +38,7 @@ public:
     void printnewqueue();
     void swapqueue();
     bool empty();
-    void createevents(TimeData TD, array<int,2> format);
+    void createevents(string filename, array<int,2> format);
 
 };
 

@@ -14,54 +14,12 @@
 #include "filereader.h"
 #include "filewriter.h"
 #include "TimeData.h"
-
+#include "testfunctions.h"
 #include "npy.hpp"
 //int gammafrequency, double threshold,std::vector<double> inputs,std::vector<double> weights,std::vector<STint> inputspiketime
 using namespace std;
 
-void loopsimulation(NeuralNetwork &Simulation){
 
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.UpdateNeuron(4,1.5,{},{});
-    Simulation.Addconnection(1,2,5,1);
-    Simulation.Addconnection(1,3,0,0);
-    Simulation.Addconnection(3,4,0,1);
-    Simulation.Addconnection(2,4,0,1);
-    Simulation.Addconnection(5,1,0,1);
-    Simulation.Addconnection(4,5,0,1);
-}
-void treesimulation(NeuralNetwork &Simulation){
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-
-    Simulation.Addconnection(1,2,0,1);
-    Simulation.Addconnection(1,3,0,1);
-    Simulation.Addconnection(2,4,0,1);
-    Simulation.Addconnection(3,5,0,1);
-    Simulation.Addconnection(3,6,0,1);
-
-}
-
-void delayedactivationsimulation(NeuralNetwork &Simulation){
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-    Simulation.AddNeuron(0);
-
-    Simulation.Addconnection(1,2,0,1);
-    Simulation.Addconnection(2,3,0,1);
-    Simulation.Addconnection(2,4,0,0.5);
-    Simulation.Addconnection(4,6,0,1);
-    Simulation.Addconnection(3,5,0,1);
-    Simulation.Addconnection(5,4,0,0);
-}
 
 NeuralNetwork simulation(int simulationnumber){
     NeuralNetwork Simulation;
@@ -82,34 +40,53 @@ NeuralNetwork simulation(int simulationnumber){
     return Simulation;
 };
 
-void Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
+int Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
     int simulationtime=0;
-
-    EventHandler.addgammaevents(Simulation);
+    //EventHandler.printoutput();
+    //EventHandler.addgammaevents(Simulation);
     while(!EventHandler.empty()){
         EventHandler.handleEvents(Simulation,simulationtime);
-         EventHandler.swapqueue();
-           if (simulationtime==1000000) {
+        EventHandler.swapqueue();
+           if (simulationtime==600||EventHandler.isempty()) {
                break;
            }
         simulationtime++;
     }
+    //EventHandler.printoutput();
+    return EventHandler.saveoutput();
 }
 int main() {
-    NeuralNetwork Simulation;
-    string filename = "input4.txt";
-    parsefile(Simulation,filename);
 
-//    string path1 { "layer1.npy"};
-//    string path2 {"layer2.npy"};
-//    Simulation.UpdateWeightdataset(path1, path2);
-    //Simulation.Printclusterinformation(1);
-   EventHandler EventHandler;
-   EventHandler.createevents("60001.bs2", {34,34});
+
+
+//    Simulation.Printclusterinformation(1);
 //   EventHandler.printqueue();
-//Simulation.Printclusterinformation(2);
-   //filewriter(Simulation,"output.txt");
-   Run(Simulation,EventHandler);
+// EventHandler.printqueue();
+//    Simulation.Printclusterinformation(1);
+    //Simulation.Printneuroninformation(2312);
+    vector<int> outputs;
+    for (int i =60001; i<60101; i++){
+        NeuralNetwork Simulation;
+        EventHandler EventHandler;
+        string filename = "input2.txt";
 
+        parsefile(Simulation,filename);
+        string path1 { "layer1.npy"};
+        string path2 {"layer2.npy"};
+        Simulation.UpdateWeightdataset(path1, path2);
+        std::ostringstream filename2;
+        filename2 << "NMNISTsmall/"<< i << ".bs2";
+        EventHandler.createevents(filename2.str(), {34,34});
+        int temp = Run(Simulation,EventHandler);
+        outputs.push_back(temp);
+        cout <<i <<"\t"<<  outputs.back() << endl;
+    }
+    for(int i=0; i<outputs.size();i++){
+        cout <<60001+i <<"\t"<<  outputs[i] << endl;
+    }
+
+    //Simulation.PrintNeuronVoltagetofile(1);
+    //Simulation.PrintNeuronVoltagetofile(2);
+    //filewriter(Simulation,"output.txt");
    return 0;
 }

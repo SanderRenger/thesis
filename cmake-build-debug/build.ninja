@@ -112,6 +112,13 @@ build CMakeFiles/thesis.dir/TimeData.cpp.obj: CXX_COMPILER__thesis_unscanned_Deb
   OBJECT_DIR = CMakeFiles\thesis.dir
   OBJECT_FILE_DIR = CMakeFiles\thesis.dir
 
+build CMakeFiles/thesis.dir/testfunctions.cpp.obj: CXX_COMPILER__thesis_unscanned_Debug C$:/Users/sande/CLionProjects/thesis/testfunctions.cpp || cmake_object_order_depends_target_thesis
+  DEP_FILE = CMakeFiles\thesis.dir\testfunctions.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/sande/CLionProjects/thesis/NumCpp
+  OBJECT_DIR = CMakeFiles\thesis.dir
+  OBJECT_FILE_DIR = CMakeFiles\thesis.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target thesis
@@ -120,7 +127,7 @@ build CMakeFiles/thesis.dir/TimeData.cpp.obj: CXX_COMPILER__thesis_unscanned_Deb
 #############################################
 # Link the executable thesis.exe
 
-build thesis.exe: CXX_EXECUTABLE_LINKER__thesis_Debug CMakeFiles/thesis.dir/main.cpp.obj CMakeFiles/thesis.dir/STInt.cpp.obj CMakeFiles/thesis.dir/Neuron.cpp.obj CMakeFiles/thesis.dir/NeuronCluster.cpp.obj CMakeFiles/thesis.dir/system.cpp.obj CMakeFiles/thesis.dir/event.cpp.obj CMakeFiles/thesis.dir/filereader.cpp.obj CMakeFiles/thesis.dir/filewriter.cpp.obj CMakeFiles/thesis.dir/TimeData.cpp.obj
+build thesis.exe: CXX_EXECUTABLE_LINKER__thesis_Debug CMakeFiles/thesis.dir/main.cpp.obj CMakeFiles/thesis.dir/STInt.cpp.obj CMakeFiles/thesis.dir/Neuron.cpp.obj CMakeFiles/thesis.dir/NeuronCluster.cpp.obj CMakeFiles/thesis.dir/system.cpp.obj CMakeFiles/thesis.dir/event.cpp.obj CMakeFiles/thesis.dir/filereader.cpp.obj CMakeFiles/thesis.dir/filewriter.cpp.obj CMakeFiles/thesis.dir/TimeData.cpp.obj CMakeFiles/thesis.dir/testfunctions.cpp.obj
   FLAGS = -g
   LINK_FLAGS = -Wl,--stack,1073741824
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

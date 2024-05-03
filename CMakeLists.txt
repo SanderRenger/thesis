@@ -21,4 +21,6 @@ add_executable(thesis main.cpp
         filewriter.h
         TimeData.cpp
         TimeData.h
+        testfunctions.cpp
+        testfunctions.h
 )

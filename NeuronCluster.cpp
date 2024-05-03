@@ -3,6 +3,7 @@
 //
 #include <vector>
 #include <array>
+#include <format>
 #include "NeuronCluster.h"
 NeuronCluster::NeuronCluster(){
     Neuroncount_cluster = 0;
@@ -140,10 +141,26 @@ STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int 
     for (int i=0; i<Neurons.size();i++) {
         if (NeuronNumbers[i] == NeuronNumber){
             //cout << "time"<< current_time%Gammafrequency << endl;
-            temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time%Gammafrequency);
-            temp1= Neurons[i].output(Gammafrequency,temp);
+            temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time);
+            temp1= Neurons[i].spike(current_time, 10,temp);
             if (!temp1.get_bool()){
-                temp1 = {(temp1.get_int()-current_time%Gammafrequency),false};
+                temp1 = {(temp1.get_int()-current_time),false};
+            }
+            return temp1;
+        }
+    }
+    return {0,true};
+};
+
+STint NeuronCluster::Output(int NeuronNumber, int current_time) {
+    STint temp1;
+    int temp;
+    for (int i=0; i<Neurons.size();i++) {
+        if (NeuronNumbers[i] == NeuronNumber){
+            //cout << "time"<< current_time%Gammafrequency << endl;
+            temp1= Neurons[i].spike(current_time, 10,temp);
+            if (!temp1.get_bool()){
+                temp1 = {(temp1.get_int()-current_time),false};
             }
             return temp1;
         }
@@ -171,6 +188,31 @@ double NeuronCluster::GetThreshold(int Neuron) {
     return 0;
 }
 
+void NeuronCluster::GetVoltage(int Cluster) {
+    std::ostringstream directory;
+    directory << "test/Cluster"<<Cluster;
+    namespace fs = std::filesystem;
+    fs::create_directories(directory.str());
+    for(int i =0; i < Neuroncount_cluster; i++){
+        std::ostringstream filename;
+        filename << "test/Cluster"<<Cluster<<"/"<<"Neuron"<<i<<".npy";
+        Neurons[i].GetVoltage(filename.str());
+        }
+    }
+
+
+void NeuronCluster::setfired(int Neuron) {
+    for(int i =0; i < Neuroncount_cluster; i++){
+        if (Neuron == NeuronNumbers[i]){
+            Neurons[i].setfired();
+        }
+    }
+}
 void NeuronCluster::UpdateWeightDataset(int Neuron_in, int Neuron_out,double Weight){
             Neurons[Neuron_in].UpdateNeuronInputWeight(Neuron_out,Weight);
 }
+
+int NeuronCluster::GetNeuroncount() {
+    return Neuroncount_cluster;
+}
+

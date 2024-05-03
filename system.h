@@ -27,9 +27,11 @@ public:
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
     void UpdateThreshold(int NeuronNumber_t,double threshold_t);
     bool Printclusterinformation(int clusternumber);
+    void Printneuroninformation(int NeuronNumber);
     bool PrintNeuronList();
     bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);
     vector<tuple<int,STint>> ActivateNeuron(int NeuronNumber, int current_time);
+    vector<tuple<int,STint>> Output(int current_time);
     vector<NeuronCluster> GetSystem();
     int GetCluster(int Neuron);
     tuple<int, int,vector<int>,int> GetNeuron (int NeuronNumber);
@@ -41,6 +43,9 @@ public:
     double GetWeight(int Cluster, int Neuron, int Input);
     double GetThreshold(int Cluster, int Neuron);
     void UpdateWeightdataset(string filename1,string filename2);
+    void PrintNeuronVoltagetofile(int Cluster);
+    void setfired(int cluster, int neuron);
+
 
 };
 

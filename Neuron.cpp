@@ -33,72 +33,80 @@ int Neuron::InputconnectionsSize(){
 //    return outputConnections.size();
 //}
 Neuron::Neuron(){
+    out = false;
+    has_fired=-3;
     NeuronNumber = 1;
     threshold = 0.99;
     inputConnections;
     outputspiketime = {0,true};
     //outputConnections.push_back({0,0});
+    vector<double> temp(300,0);
+    spiketrains = temp;
 }
 
-STint Neuron::output(int Gammafrequency,int neuroninput) {
+STint Neuron::spike(int current_time,int Gammafrequency,int neuroninput) {
    bool firstspike = false;
-   if(spiketrains.size() != Gammafrequency){
+   int samplesize=300;
+   if(spiketrains.size() != samplesize){
        firstspike = true;
-       spiketrains.resize(Gammafrequency);
+       spiketrains.resize(samplesize);
        fill(spiketrains.begin(),spiketrains.end(),0);
    }
-   bool out = false;
-   int temp2;
+   bool temp= false;
+   int temp2=0;
    double output=0;
-   double slope=0;
+   float slope=0;
+   float total_spike_prev = 0;
+   float total_spike = 0;
    double weights_t;
    STint Spiketime_t;
+   int Taus = 10;
    // ofstream myfile;
    //if (NeuronNumber == 4){
    //   myfile.open ("log1.txt");
    //}
    //cout << inputConnections.size() << endl;
    //cout << "neuron\t"<< neuroninput<< "time\t"<< get<2>(inputConnections[neuroninput]).get_int() << endl;
-   for(int i=0;i< Gammafrequency;i++){
-       if (NeuronNumber==2312&&spiketrains[i]>0){
-           //cout <<"output of Neuron: " << NeuronNumber <<" = "<<spiketrains[i] << "\ttime:"<<i<<endl;
-       }
+   //if (!has_fired){
+       for (int i = current_time; i < samplesize; i++) {
+           if (current_time != get<2>(inputConnections[neuroninput]).get_int()){ cout <<"hey that shouldn't happen"<<endl;}
 
-           weights_t =get<1>(inputConnections[neuroninput]);
-           Spiketime_t =get<2>(inputConnections[neuroninput]);
-           if (!Spiketime_t.get_bool()){
-               if (i >= Spiketime_t.get_int()){
-                   if(i< Spiketime_t.get_int()+1){
-                       slope = ((double)1/(double)1)*weights_t;
-                   }
-                   else if(i< Spiketime_t.get_int()+3000){
-                       slope = 0;
-                   }
-                   else if((i<Spiketime_t.get_int()+4000)){
-                       slope =-((double)1/(double)1000)*weights_t;;
-                   }
-                   else {
-                       slope = 0;
-                   }
+           weights_t = get<1>(inputConnections[neuroninput]);
 
+           if (neuroninput >1155 && neuroninput <2311){
+               //weights_t = weights_t*-1;
+           }
+           Spiketime_t = get<2>(inputConnections[neuroninput]);
+           if (!Spiketime_t.get_bool()) {
+               if (i >= Spiketime_t.get_int()) {
+                   total_spike_prev = total_spike;
+                   double timestep = (double) (i - Spiketime_t.get_int()) / (double) (Taus);
+                   if ((i < samplesize)) {
+                       total_spike = weights_t * timestep * exp(1 - timestep);
+                   } else {
+                       break;
+                   }
                }
+               slope = total_spike - total_spike_prev;
                output += slope;
+
                spiketrains[i] = spiketrains[i] + output;
+               //if (NeuronNumber==2+34*34*2){cout << spiketrains[i] << endl;}
                //cout << "spiketrain:\t"<< spiketrains[i] << endl;
            }
-       if (spiketrains[i] >= threshold){
 
-           out= true;
-           temp2 = i;
+           if (spiketrains[i] >= threshold) {
+                   temp2=i;
+                   temp = true;
+           }
+
        }
-   }
-   //cout << output << endl;
-    //if (NeuronNumber==4){
-    //    myfile.close();
-    //}
-    if (out){
+    if (temp){
+        if(has_fired+1 <= temp2) {
+            has_fired = temp2;
         //cout << "Neuron: \t" << NeuronNumber << "fired" << endl;
         return {temp2,false};
+        }
     }
     return {0,true};
 }
@@ -142,25 +150,26 @@ bool Neuron::RemoveNeuronInput(int Neuronnumber){
 };
 
 void Neuron::GammaCycle(bool Gammareset,int Gammafrequency) {
-    fill(spiketrains.begin(),spiketrains.end(),0);
-    for (int i =0;i<inputConnections.size();i++){
-        if (!get<2>(inputConnections[i]).get_bool()){
-            if (Gammareset){ //reset or put old spike in negative gammacycle time
-                get<2>(inputConnections[i]) = {0,true};
-            }
-            else{
-                    get<2>(inputConnections[i]) = {get<2>(inputConnections[i]).get_int()-Gammafrequency,false};
-            }
-            if (!outputspiketime.get_bool()) {
-                if (outputspiketime.get_int() >
-                    get<2>(inputConnections[i]).get_int()) { //update weights based on spiketime close to threshhold
-                    get<1>(inputConnections[i]) += 0;
-                } else {
-                    get<1>(inputConnections[i]) -= 0;
-                }
-            }
-        }
-    }
+    has_fired=false;
+    //fill(spiketrains.begin(),spiketrains.end(),0);
+    //    for (int i =0;i<inputConnections.size();i++){
+    //        if (!get<2>(inputConnections[i]).get_bool()){
+    //            if (Gammareset){ //reset or put old spike in negative gammacycle time
+    //                get<2>(inputConnections[i]) = {0,true};
+    //            }
+    //            else{
+    //                    get<2>(inputConnections[i]) = {get<2>(inputConnections[i]).get_int()-Gammafrequency,false};
+    //            }
+    //            if (!outputspiketime.get_bool()) {
+    //                if (outputspiketime.get_int() >
+    //                    get<2>(inputConnections[i]).get_int()) { //update weights based on spiketime close to threshhold
+    //                    get<1>(inputConnections[i]) += 0;
+    //                } else {
+    //                    get<1>(inputConnections[i]) -= 0;
+    //                }
+    //            }
+    //        }
+    //    }
 }
 bool Neuron::UpdateNeuronInputWeight(int Neuronnumber,double Weights){
     for(int i=0; i<inputConnections.size();i++){
@@ -174,7 +183,9 @@ bool Neuron::UpdateNeuronInputWeight(int Neuronnumber,double Weights){
 };
 
 bool Neuron::printNeuronInformation(){
-    cout << "Neuron: \t\t\t" << NeuronNumber << endl << endl;
+    if (NeuronNumber > 2823) {cout << "Neuron: \t\t\t" << NeuronNumber%2824 << endl << endl;}
+    else if (NeuronNumber >2312 ) {cout << "Neuron: \t\t\t" << NeuronNumber%2312 << endl << endl;}
+    else {cout << "Neuron: \t\t\t" << NeuronNumber << endl << endl;}
     cout << "Threshold: \t\t\t"<< threshold<<endl <<endl;
     cout << "Numinputs: \t\t\t"<<inputConnections.size()<<endl<<endl;
     if (outputspiketime.get_bool()){
@@ -185,7 +196,9 @@ bool Neuron::printNeuronInformation(){
     }
     cout << "Input Neurons Information: \t";
     for (int i=0;i<inputConnections.size();i++){
-        cout << get<0>(inputConnections[i])<<"\t" << get<1>(inputConnections[i])<<"\t" ;
+        if (get<0>(inputConnections[i]) > 2823) { cout << get<0>(inputConnections[i])%2824<<"\t" << get<1>(inputConnections[i])<<"\t" ;}
+        else if (get<0>(inputConnections[i]) > 2312) { cout << get<0>(inputConnections[i])%2312<<"\t" << get<1>(inputConnections[i])<<"\t" ;}
+        else { cout << get<0>(inputConnections[i])<<"\t" << get<1>(inputConnections[i])<<"\t" ;}
         if (get<2>(inputConnections[i]).get_bool()){
             cout << "No Spike" << endl << "\t\t\t\t";
         }
@@ -197,6 +210,8 @@ bool Neuron::printNeuronInformation(){
 
 return true;
 }
+
+
 
 double Neuron::GetWeight(int Input){
     //cout << "Neuron:\t"<< NeuronNumber << endl;
@@ -211,4 +226,26 @@ double Neuron::GetWeight(int Input){
 
 double Neuron::GetThreshold() {
     return threshold;
+}
+
+void Neuron::GetVoltage(const string& filename) {
+    //cout << NeuronNumber << "\t" << filename << endl;
+    npy::npy_data_ptr<double> d;
+    d.data_ptr = spiketrains.data();
+    d.shape = {1,300};
+    d.fortran_order = false; // optional
+    npy::write_npy(filename, d);
+}
+
+void Neuron::setfired() {
+    has_fired = true;
+}
+
+STint Neuron::output(int current_time){
+    if (spiketrains[current_time+1]> threshold && has_fired +1 < current_time){
+        has_fired = true;
+        return {current_time+1, false};
+
+    }
+    return {0,true};
 }

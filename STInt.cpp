@@ -131,12 +131,11 @@ STint STint::greater_than(STint a, STint b) {
         return STint{0, true};
     };
 
-STint::print(STint a){
+void STint::print(STint a){
         if (a.infArrival) {
             cout << "infinite" << endl;
         }
         cout << int(a.value) << endl;
-        return 0;
     };
 STint STint::add_variable(STint a, STint b) {
         if (a.infArrival || b.infArrival) {

@@ -5,7 +5,10 @@
 #ifndef THESIS_NEURONCLUSTER_H
 #define THESIS_NEURONCLUSTER_H
 #include "Neuron.h"
+#include <format>
 #include <vector>
+#include <sstream>
+#include <filesystem>
 
 class NeuronCluster {
 public:
@@ -22,13 +25,17 @@ public:
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections);
     void UpdateThreshold(int NeuronNumber_t,double threshold_t);
+    void setfired(int Neuron);
     STint ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
+    STint Output(int NeuronNumber, int current_time);
     vector<int> GetNeurons();
     int Neuroncount();
     int GetGammafrequency();
     void DoGammaCycle();
+    int GetNeuroncount();
     double GetWeight(int Neuron, int Input);
     double GetThreshold(int Neuron);
+    void GetVoltage(int Cluster);
     void UpdateWeightDataset(int Neuron_in, int Neuron_out,double Weight);
 private:
     int Neuroncount_cluster;

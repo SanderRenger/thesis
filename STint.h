@@ -20,7 +20,7 @@ public:
     STint greater_or_equal(STint a, STint b);
     STint equal(STint a, STint b);
     STint greater_than(STint a, STint b);
-    print(STint a);
+    void print(STint a);
     STint add_variable(STint a, STint b);
     STint add_constant(int b);
     int get_int();

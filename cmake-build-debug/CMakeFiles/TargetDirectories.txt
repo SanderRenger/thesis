@@ -1,3 +1,0 @@
-C:/Users/sande/CLionProjects/thesis/cmake-build-debug/CMakeFiles/thesis.dir
-C:/Users/sande/CLionProjects/thesis/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/sande/CLionProjects/thesis/cmake-build-debug/CMakeFiles/rebuild_cache.dir

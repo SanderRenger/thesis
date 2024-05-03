@@ -36,6 +36,19 @@ vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int cur
     }
     return temp2;
 }
+
+vector<tuple<int,STint>> NeuralNetwork::Output(int current_time) {
+    STint temp1;
+    vector<tuple<int,STint>> temp2;
+    for (int i =NeuronClusters[0].GetNeuroncount()-1; i < Neurons_total - NeuronClusters[0].GetNeuroncount();i++) {
+        //cout << "cluster\t" << i << endl;
+        temp1= NeuronClusters[get<1>(NeuronList[i])].Output(i,current_time);
+        if (!temp1.get_bool()){
+            //cout << "outputs\t=" << Outputs[i] << "delay\t"<< delay << endl;
+            temp2.push_back({i,temp1});
+        }
+    return temp2;
+}
 vector<array<int,2>> NeuralNetwork::Getallclusters(){
     vector<array<int,2>> temp;
     for(int i=0; i<NeuronClusters.size();i++){
@@ -181,6 +194,9 @@ bool NeuralNetwork::Printclusterinformation(int clusternumber){
     NeuronClusters[clusternumber].printAllNeuronInformation();
     return true;
 }
+void NeuralNetwork::Printneuroninformation(int NeuronNumber){
+    NeuronClusters[GetCluster(NeuronNumber)].printNeuronInformation(NeuronNumber);
+}
 
 bool NeuralNetwork::PrintNeuronList(){
     cout << "Neurons: \t\t\t\t\t" << NeuronList.size() << endl << endl;
@@ -229,8 +245,9 @@ void NeuralNetwork::UpdateWeightdataset(string filename1,string filename2) {
     std::vector<double> data = d.data;
     std::vector<unsigned long> shape = d.shape;
     int rows = d.shape[1];
+    //cout << d.data[514]<< endl;
     int sizelayer1 = rows;
-    cout << sizelayer1 << endl;
+    //cout << sizelayer1 << endl;
        for (int i=0;i<data.size();i++){
             NeuronClusters[1].UpdateWeightDataset(int(i/rows),i%rows,data[i]);
     }
@@ -239,9 +256,17 @@ void NeuralNetwork::UpdateWeightdataset(string filename1,string filename2) {
 
     data = d.data;
        rows = d.shape[1];
-    cout << rows << endl;
-    cout << data.size() << endl;
+    //cout << rows << endl;
+    //cout << data.size() << endl;
     for (int i=0;i<data.size();i++){
         NeuronClusters[2].UpdateWeightDataset(int(i/rows),i%rows+sizelayer1,data[i]);
     }
 }
+
+void NeuralNetwork::PrintNeuronVoltagetofile(int Cluster){
+    NeuronClusters[Cluster].GetVoltage(Cluster);
+};
+void NeuralNetwork::setfired(int cluster, int Neuron){
+    NeuronClusters[cluster].setfired(Neuron);
+}
+

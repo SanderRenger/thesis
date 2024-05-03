@@ -21,6 +21,7 @@ public:
     void lowerdelay();
     event();
     event(int nn,int d);
+    int geteventid();
 };
 
 class EventHandler{
@@ -29,8 +30,10 @@ private:
     vector<event> newqueue;
     int total_events;
     int queuesize;
+    array<int,10> output;
 public:
     EventHandler();
+    void printqueuesize();
     void addgammaevents(NeuralNetwork &NNetwork);
     void addEvent(const event& event_t);
     void handleEvents(NeuralNetwork &NNetwork,int current_time);
@@ -39,6 +42,9 @@ public:
     void swapqueue();
     bool empty();
     void createevents(string filename, array<int,2> format);
+    void printoutput();
+    bool isempty();
+    int saveoutput();
 
 };
 

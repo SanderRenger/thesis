@@ -52,13 +52,12 @@ void EventHandler::addgammaevents(NeuralNetwork &NNetwork){
 }
 
 void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
+    vector<tuple<int,STint>> temp;
     while (!eventqueue.empty()) {
-        vector<tuple<int,STint>> temp;
-
         if (eventqueue.back().getdelay() != 0) {
-            event temp = eventqueue.back();
-            temp.lowerdelay();
-            newqueue.push_back(temp);
+            event tempevent = eventqueue.back();
+            tempevent.lowerdelay();
+            newqueue.push_back(tempevent);
             eventqueue.pop_back();
         }
         else {
@@ -71,55 +70,58 @@ void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
                 eventqueue.pop_back();
                 //cout << "Gammacycle event:\t" << cluster << "\ttime:\t" << current_time << endl;
             }
-            else{
-              event current_neuron = eventqueue.back();
-              NNetwork.setfired(NNetwork.GetCluster(current_neuron.getneuronNumber()),current_neuron.getneuronNumber());
-              for (int i = 0; i < eventqueue.size() - 1; i++) {
-                  if ((current_neuron.getneuronNumber() == eventqueue[i].getneuronNumber()) &&current_neuron.getneuronNumber()>= 34*34*2) {
-                      eventqueue.erase(eventqueue.begin() + i);
-                      queuesize--;
-                  }
-               }
+            else {
+                event current_neuron = eventqueue.back();
+                NNetwork.ActivateNeuron(current_neuron.getneuronNumber(), current_time);
+                NNetwork.setfired(NNetwork.GetCluster(current_neuron.getneuronNumber()),current_neuron.getneuronNumber(),current_time);
+//                for (int i = 0; i < eventqueue.size() - 1; i++) {
+//                    if ((current_neuron.getneuronNumber() == eventqueue[i].getneuronNumber()) &&
+//                        current_neuron.getneuronNumber() >= 34 * 34 * 2) {
+//                        eventqueue.erase(eventqueue.begin() + i);
+//                        queuesize--;
+//                    }
+//                }
+                if (current_neuron.getneuronNumber()>(34*34*2+512)){
+                //    cout << "Neuron:\t" << current_neuron.getneuronNumber();
+                //    cout << "\tin layer: " <<3<< " Fired\t";
+                //    cout << queuesize << " events left" << endl;
+                    output[current_neuron.getneuronNumber()-(34*34*2+512)]++;
+                }
+                else if (current_neuron.getneuronNumber()>34*34*2){
+/*                   cout << "Neuron:\t" << current_neuron.getneuronNumber();
+                   cout << "\tin layer: " <<2<< " Fired\t";
+                   cout << queuesize << " events left" << endl;*/
+                }
+                else {
+                    //cout << "\tin layer:" <<1<< " Fired\t" << endl;
+                }
 
-                temp = NNetwork.ActivateNeuron(current_neuron.getneuronNumber(), current_time);
 
-                for (int i = 0; i < temp.size(); i++) {
-                    queuesize++;
-                    newqueue.push_back({get<0>(temp[i]), get<1>(temp[i]).get_int()});
+
+                if (total_events%100==0){
+                    //eventqueue.clear();
+                    //newqueue.clear();
+                    //cout << "total events: " << total_events<< endl;
                 }
                 total_events++;
                 eventqueue.pop_back();
                 queuesize--;
-
-                if (current_neuron.getneuronNumber()>(34*34*2+512)){
-//                    cout << "Neuron:\t" << current_neuron.getneuronNumber();
-//                    cout << "\tin layer: " <<3<< " Fired\t";
-//                    cout << queuesize << " events left" << endl;
-                    output[current_neuron.getneuronNumber()-(34*34*2+512)]++;
-                }
-//                else if (current_neuron.getneuronNumber()>34*34*2){
-//                    //cout << "Neuron:\t" << current_neuron.getneuronNumber();
-//                    //cout << "\tin layer: " <<2<< " Fired\t";
-//                    //cout << queuesize << " events left" << endl;
-//                }
-//                else {
-//                    //cout << "\tin layer:" <<1<< " Fired\t" << endl;
-//                }
-//
-//
-//
-//                if (total_events%100==0){
-//                    //eventqueue.clear();
-//                    //newqueue.clear();
-//                    cout << "total events: " << total_events<< endl;
-//                }
             }
+        }
 
 
 
+    }
+    temp = NNetwork.Output(current_time);
+    for (int i = 0; i < temp.size(); i++) {
+        queuesize++;
+        newqueue.push_back({get<0>(temp[i]), get<1>(temp[i]).get_int()});
+        if (get<0>(temp[i])>(34*34*2-1)){
+            //cout << get<0>(temp[i]) << endl;
         }
     }
 }
+
 void EventHandler::printqueuesize() {
     cout << "queue size:\t" << eventqueue.size() << endl;
 }

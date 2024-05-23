@@ -61,12 +61,10 @@ bool NeuronCluster::AddEmptyNeuron(int NeuronNumber){
     return true;
 }
 
-bool NeuronCluster::AddEmptyNeuron(int NeuronNumber, double threshold){
+bool NeuronCluster::AddNeuron(Neuron Neuron, int NeuronNumber){
     Neuroncount_cluster +=1;
     NeuronNumbers.push_back(NeuronNumber);
-    Neuron temp;
-    Neurons.push_back(temp);
-    Neurons.back().UpdateNeuronThreshold(threshold);
+    Neurons.push_back(Neuron);
     Neurons[Neuroncount_cluster-1].UpdateNeuronNumber(NeuronNumber);
     return true;
 }
@@ -135,32 +133,30 @@ bool NeuronCluster::printAllNeuronInformation(){
     return true;
 };
 
-STint NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
-    STint temp1;
+void NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
+
     int temp;
+
     for (int i=0; i<Neurons.size();i++) {
         if (NeuronNumbers[i] == NeuronNumber){
             //cout << "time"<< current_time%Gammafrequency << endl;
             temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time);
-            temp1= Neurons[i].spike(current_time, 10,temp);
-            if (!temp1.get_bool()){
-                temp1 = {(temp1.get_int()-current_time),false};
-            }
-            return temp1;
+            Neurons[i].spike(current_time, 10,temp);
         }
     }
-    return {0,true};
 };
 
 STint NeuronCluster::Output(int NeuronNumber, int current_time) {
     STint temp1;
-    int temp;
     for (int i=0; i<Neurons.size();i++) {
+        //cout << NeuronNumber<< endl;
         if (NeuronNumbers[i] == NeuronNumber){
             //cout << "time"<< current_time%Gammafrequency << endl;
-            temp1= Neurons[i].spike(current_time, 10,temp);
+
+            temp1= Neurons[i].output(current_time);
             if (!temp1.get_bool()){
                 temp1 = {(temp1.get_int()-current_time),false};
+                //cout << "hi" << endl;
             }
             return temp1;
         }
@@ -177,6 +173,14 @@ double NeuronCluster::GetWeight(int Neuron, int Input) {
         }
     }
     return 0;
+}
+
+vector<vector<double>> NeuronCluster::GetWeights() {
+    vector<vector<double>> temp;
+    for(int i =0; i < Neuroncount_cluster; i++){
+            temp.push_back(Neurons[i].GetWeights());
+    }
+    return temp;
 }
 
 double NeuronCluster::GetThreshold(int Neuron) {
@@ -201,10 +205,10 @@ void NeuronCluster::GetVoltage(int Cluster) {
     }
 
 
-void NeuronCluster::setfired(int Neuron) {
+void NeuronCluster::setfired(int Neuron,int current_time) {
     for(int i =0; i < Neuroncount_cluster; i++){
         if (Neuron == NeuronNumbers[i]){
-            Neurons[i].setfired();
+            Neurons[i].setfired(current_time);
         }
     }
 }
@@ -213,6 +217,6 @@ void NeuronCluster::UpdateWeightDataset(int Neuron_in, int Neuron_out,double Wei
 }
 
 int NeuronCluster::GetNeuroncount() {
-    return Neuroncount_cluster;
+    return NeuronNumbers.size();
 }
 

@@ -20,34 +20,33 @@ vector<tuple<int, int, vector<int>,int>> NeuralNetwork::getNeuronList() {
     return NeuronList;
 }
 
-vector<tuple<int,STint>> NeuralNetwork::ActivateNeuron(int NeuronNumber, int current_time) {
+void NeuralNetwork::ActivateNeuron(int NeuronNumber, int current_time) {
     STint temp1;
-    vector<tuple<int,STint>> temp2;
+    vector<tuple<int, STint>> temp2;
     int Neuroncluster = get<1>(NeuronList[NeuronNumber]);
     vector<int> Outputs = get<2>(NeuronList[NeuronNumber]);
+    //cout << Outputs.size() << endl;
     int delay = get<3>(NeuronList[NeuronNumber]);
-    for (int i =0; i < Outputs.size();i++) {
-        //cout << "cluster\t" << i << endl;
-        temp1= NeuronClusters[get<1>(NeuronList[Outputs[i]])].ActivateNeuronInput(Outputs[i],NeuronNumber,current_time);
-        if (!temp1.get_bool()){
-            //cout << "outputs\t=" << Outputs[i] << "delay\t"<< delay << endl;
-               temp2.push_back({Outputs[i],temp1.add_constant(delay)});
-        }
+    for (int i = 0; i < Outputs.size(); i++) {
+        NeuronClusters[get<1>(NeuronList[Outputs[i]])].ActivateNeuronInput(Outputs[i], NeuronNumber, current_time);
     }
-    return temp2;
 }
 
 vector<tuple<int,STint>> NeuralNetwork::Output(int current_time) {
     STint temp1;
-    vector<tuple<int,STint>> temp2;
-    for (int i =NeuronClusters[0].GetNeuroncount()-1; i < Neurons_total - NeuronClusters[0].GetNeuroncount();i++) {
-        //cout << "cluster\t" << i << endl;
-        temp1= NeuronClusters[get<1>(NeuronList[i])].Output(i,current_time);
-        if (!temp1.get_bool()){
-            //cout << "outputs\t=" << Outputs[i] << "delay\t"<< delay << endl;
-            temp2.push_back({i,temp1});
+    vector<tuple<int, STint>> temp2;
+    int temp = NeuronClusters[0].GetNeuroncount();
+
+    for (int i =NeuronClusters[0].Neuroncount()-1; i <NeuronList.size(); i++) {
+       temp1 = NeuronClusters[get<1>(NeuronList[i])].Output(i, current_time);
+        if (!temp1.get_bool()) {
+            temp2.push_back({i, temp1});
         }
-    return temp2;
+    }
+    if (!temp2.empty()){
+        return temp2;
+    }
+        return {};
 }
 vector<array<int,2>> NeuralNetwork::Getallclusters(){
     vector<array<int,2>> temp;
@@ -110,11 +109,20 @@ bool NeuralNetwork::DeleteNeuron(int NeuronNumber, int ClusterNumber){
 bool NeuralNetwork::AddNeuron(int ClusterNumber){
     if(NeuronClusters.size() >= ClusterNumber){
         Neurons_total +=1;
-        NeuronList.push_back({Neurons_total-1,ClusterNumber,{},0});
+        //NeuronList.push_back({Neurons_total-1,ClusterNumber,{},0});
         NeuronClusters[ClusterNumber].AddEmptyNeuron(Neurons_total-1);
         return true;
     }
     return false;
+}
+
+void NeuralNetwork::AddNeuron(int ClusterNumber, const Neuron& Neuron){
+    if(NeuronClusters.size() >= ClusterNumber){
+        Neurons_total +=1;
+        //NeuronList.push_back({Neurons_total-1,ClusterNumber,{},0});
+        NeuronClusters[ClusterNumber].AddNeuron(Neuron,Neurons_total-1);
+    }
+
 }
 
 bool NeuralNetwork::AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t){
@@ -198,7 +206,7 @@ void NeuralNetwork::Printneuroninformation(int NeuronNumber){
     NeuronClusters[GetCluster(NeuronNumber)].printNeuronInformation(NeuronNumber);
 }
 
-bool NeuralNetwork::PrintNeuronList(){
+void NeuralNetwork::PrintNeuronList(){
     cout << "Neurons: \t\t\t\t\t" << NeuronList.size() << endl << endl;
     cout << "Highest Neuron Number: \t\t\t\t"<< Neurons_total<<endl <<endl;
 
@@ -210,7 +218,23 @@ bool NeuralNetwork::PrintNeuronList(){
         }
     }
     cout << endl;
-    return true;
+};
+
+void NeuralNetwork::PrintNeuronList(int NeuronCluster){
+    cout << "Neurons: \t\t\t\t\t" << NeuronList.size() << endl << endl;
+    cout << "Highest Neuron Number: \t\t\t\t"<< Neurons_total<<endl <<endl;
+
+    cout << "Neurons Information: \t" << endl;
+    for (auto & i : NeuronList){
+        if(NeuronCluster==get<1>(i)){
+            cout << "Neuron:\t"<<get<0>(i)<<"\tCluster\t" << get<1>(i)<<endl;
+            for(auto & j : get<2>(i)){
+                cout << "\tOutput:\t" << (j) << endl;
+            }
+        }
+
+    }
+    cout << endl;
 };
 
 vector<NeuronCluster> NeuralNetwork::GetSystem() {
@@ -229,6 +253,14 @@ tuple<int, int,vector<int>,int> NeuralNetwork::GetNeuron(int NeuronNumber) {
 }
 double NeuralNetwork::GetWeight(int Cluster, int Neuron, int Input) {
     return NeuronClusters[Cluster].GetWeight(Neuron, Input);
+}
+
+vector<vector<vector<double>>> NeuralNetwork::GetWeights() {
+    vector<vector<vector<double>>> temp;
+    for(int i=0;i<NeuronClusters.size();i++){
+        temp.push_back(NeuronClusters[i].GetWeights());
+    }
+    return temp;
 }
 
 double NeuralNetwork::GetThreshold(int Cluster, int Neuron) {
@@ -266,7 +298,28 @@ void NeuralNetwork::UpdateWeightdataset(string filename1,string filename2) {
 void NeuralNetwork::PrintNeuronVoltagetofile(int Cluster){
     NeuronClusters[Cluster].GetVoltage(Cluster);
 };
-void NeuralNetwork::setfired(int cluster, int Neuron){
-    NeuronClusters[cluster].setfired(Neuron);
+void NeuralNetwork::setfired(int cluster, int Neuron, int current_time){
+    NeuronClusters[cluster].setfired(Neuron, current_time);
 }
 
+void NeuralNetwork::MakeNeuronListFullConnected(vector<int> shape){
+    vector<tuple<int, int,vector<int>,int>> temp;
+    int count=0;
+    //cout << shape.size()<< endl;
+    for(int k =0;k < shape.size()-1;k++){
+        vector<int> outputs;
+        count+=shape[k];
+        //cout << count << endl;
+        for(int i=0;i<shape[k+1];i++){
+            //cout << count+i << endl;
+            outputs.push_back(count+i);
+        }
+        for(int i=0;i<shape[k];i++){
+            NeuronList.push_back({(i+count-shape[k]),k,outputs,0});
+        }
+    }
+    for(int i=0;i<shape.back();i++){
+        NeuronList.push_back({(i+count),shape.size()-1,{},0});
+    }
+
+};

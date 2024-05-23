@@ -14,9 +14,8 @@ class NeuronCluster {
 public:
     NeuronCluster(vector<Neuron> Neurons_t, int Gammafrequency_t);
     NeuronCluster();
-    bool AddNeuron(Neuron Neuron);
+    bool AddNeuron(Neuron Neuron, int NeuronNumber);
     bool AddEmptyNeuron(int NeuronNumber);
-    bool AddEmptyNeuron(int NeuronNumber, double threshold);
     bool RemoveNeuron(int NeuronNumber);
     bool ChangeGammafrequency(int Gammafrequency_t);
     bool printNeuronInformation(int NeuronNumber);
@@ -25,8 +24,8 @@ public:
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections);
     void UpdateThreshold(int NeuronNumber_t,double threshold_t);
-    void setfired(int Neuron);
-    STint ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
+    void setfired(int Neuron, int current_time);
+    void ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
     STint Output(int NeuronNumber, int current_time);
     vector<int> GetNeurons();
     int Neuroncount();
@@ -34,6 +33,7 @@ public:
     void DoGammaCycle();
     int GetNeuroncount();
     double GetWeight(int Neuron, int Input);
+    vector<vector<double>> GetWeights();
     double GetThreshold(int Neuron);
     void GetVoltage(int Cluster);
     void UpdateWeightDataset(int Neuron_in, int Neuron_out,double Weight);

@@ -21,16 +21,17 @@ public:
     bool DeleteNeuron(int NeuronNumber);
     bool DeleteNeuron(int NeuronNumber, int ClusterNumber);
     bool AddNeuron(int ClusterNumber);
-    bool AddNeuron(int ClusterNumber, double threshold);
+    void AddNeuron(int ClusterNumber,const Neuron& Neuron);
     bool AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t);
     bool UpdateGammaFrequency(int ClusterNumber,int Gammafrequency);
     void UpdateThreshold(int NeuronNumber_t,double threshold_t);
     bool Printclusterinformation(int clusternumber);
     void Printneuroninformation(int NeuronNumber);
-    bool PrintNeuronList();
+    void PrintNeuronList();
+    void PrintNeuronList(int ClusterNumber);
     bool Addconnection(int NeuronNumber_1, int NeuronNumber_2, int Delay,double weight_t);
-    vector<tuple<int,STint>> ActivateNeuron(int NeuronNumber, int current_time);
+    void ActivateNeuron(int NeuronNumber, int current_time);
     vector<tuple<int,STint>> Output(int current_time);
     vector<NeuronCluster> GetSystem();
     int GetCluster(int Neuron);
@@ -41,10 +42,12 @@ public:
     int TotalNeurons();
     vector<array<int,2>> Getallclusters();
     double GetWeight(int Cluster, int Neuron, int Input);
+    vector<vector<vector<double>>> GetWeights();
     double GetThreshold(int Cluster, int Neuron);
     void UpdateWeightdataset(string filename1,string filename2);
     void PrintNeuronVoltagetofile(int Cluster);
-    void setfired(int cluster, int neuron);
+    void setfired(int cluster, int neuron, int current_time);
+    void MakeNeuronListFullConnected(vector<int> shape);
 
 
 };

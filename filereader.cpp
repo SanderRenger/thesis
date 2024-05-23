@@ -258,6 +258,18 @@ void parsefile(NeuralNetwork &Simulation,string filename){
             }
         }
     }
+    else if(mode==3){
+        int temp=0;
+        for(int i=0;i<clusterData.size();i++){
+            Simulation.UpdateGammaFrequency(i,get<0>(clusterData[i]));
+            for(int j=0;j<get<2>(clusterData[i]).size();j++) {
+                Neuron Neuron;
+                for(int k=0; k<get<1>(get<2>(clusterData[i])[j]).size();k++){
+                    Neuron.AddNeuronInput(get<0>(get<1>(get<2>(clusterData[i])[j])[k]),get<1>(get<1>(get<2>(clusterData[i])[j])[k]));
+                };
+            }
+        }
+    }
     else if (mode==2){
         int temp=0;
         for(int i=0;i<clusterDataFull.size();i++){

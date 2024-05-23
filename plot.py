@@ -7,8 +7,8 @@ import math
 Ts=10
 
 #os.path.join(os.getcwd(), parentdir, filename)
-i=120
-j=1
+i=8
+j=2
 x = np.load('cmake-build-debug/test/Cluster'+str(j)+'/Neuron'+str(i)+'.npy')
 y = np.load('cmake-build-debug/temp/Layer'+str(j)+'/PyTorchNeuron'+str(i)+'.npy')
 plt.title("Potential")

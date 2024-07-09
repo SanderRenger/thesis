@@ -48,10 +48,14 @@ int Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
     while(!EventHandler.empty()){
         EventHandler.handleEvents(Simulation,simulationtime);
         EventHandler.swapqueue();
-           if (simulationtime==600||EventHandler.isempty()) {
-               break;
-           }
         simulationtime++;
+        if(EventHandler.isempty()){
+            EventHandler.swapnewqueue();
+            simulationtime=0;
+        }
+        if (EventHandler.isempty()||simulationtime==1305) {
+            break;
+        }
     }
     //EventHandler.printoutput();
     return EventHandler.saveoutput();
@@ -59,14 +63,17 @@ int Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
 
 void Loop(const string& Network){
     vector<int> outputs;
-    for (int i =60001; i<60102; i++){
+    for (int i =60001; i<60002; i++){
         EventHandler EventHandler;
         NeuralNetwork Simulation;
         filereaderbin(Network,Simulation);
+        //Simulation.PrintNeuronList(1);
         //Simulation.Printclusterinformation(2);
         std::ostringstream filename;
         filename << "NMNISTsmall/"<< i << ".bs2";
         EventHandler.createevents(filename.str(), {34,34});
+        Simulation.DeleteConnectionRandom(0,300000);
+        //Simulation.DeleteConnectionRandom(1,1000);
         int temp = Run(Simulation,EventHandler);
         outputs.push_back(temp);
         cout <<i <<"\t"<<  outputs.back() << endl;
@@ -77,26 +84,36 @@ void Loop(const string& Network){
         cout <<60001+i <<"\t"<<  outputs[i] << endl;
     }
 }
-int main() {
-    //NeuralNetwork Simulation;
-    //string filename = "input2.txt";
-    //parsefile(Simulation,filename);
-    //string path1 { "layer1.npy"};
-    //string path2 {"layer2.npy"};
-    //Simulation.UpdateWeightdataset(path1, path2);
-    //filewriterbin("outbin.npy", Simulation);
-    NeuralNetwork Simulation;
-    string filename {"outbin.npy"};
+//dvs 128
 
-    //filereaderbin(filename,Simulation);
-    //Simulation.PrintNeuronList(2);
-    //Simulation.Printclusterinformation(2);
-    //filereaderbin("outbin.npy",Simulation);
-    //Simulation2.Printclusterinformation(2);
-    Loop(filename);
+
+int main() {
+    EventHandler EventHandler;
+    NeuralNetwork Simulation;
+    string filename {"connections.npy"};
+
+    filereaderbinnew(filename,Simulation);
+    std::ostringstream filename2;
+    filename2 << "DVSGesturedataset/user01_fluorescent/0"<<".npy";
+    EventHandler.createevents(filename2.str(), {128,128});
+//    EventHandler.printqueuetofile("testqueue2.txt");
+//    Simulation.PrintNeuronListNeuronOutput(32768);
+    //Simulation.Printneuroninformation(34882);
+    //Simulation.PrintneuroninformationInputs(0);
+    //Simulation.Printclusterinformation(1);
+    EventHandler.printqueuetofile("testqueue.txt");
+    int temp = Run(Simulation,EventHandler);
+    vector<int> outputs;
+    outputs.push_back(temp);
+    cout << outputs[0] << endl;
+    Simulation.PrintNeuronVoltagetofile(0);
+//    Simulation.PrintNeuronVoltagetofile(1);
+//    Simulation.Printneuroninformation(-1,0);
+//    Simulation.Printclusterinformation(1);
+//    Loop(filename);
 
 //    Simulation.Printclusterinformation(1);
-//   EventHandler.printqueue();
+
 // EventHandler.printqueue();
 //    Simulation.Printclusterinformation(1);
     //Simulation.Printneuroninformation(2312);

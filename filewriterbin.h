@@ -15,4 +15,5 @@
 #include <array>
 
 void filewriterbin(string filename,NeuralNetwork Simulation);
+void filewriterbinnew(string filename,NeuralNetwork Simulation);
 #endif //THESIS_FILEWRITERBIN_H

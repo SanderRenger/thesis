@@ -19,16 +19,19 @@ public:
     bool RemoveNeuron(int NeuronNumber);
     bool ChangeGammafrequency(int Gammafrequency_t);
     bool printNeuronInformation(int NeuronNumber);
+    void printNeuronInformationInputs(int NeuronNumber);
     bool printAllNeuronInformation();
+    void printAllNeuronInformation(int neuronnumber);
     bool AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, double weight_t);
     bool UpdateNeuronNumber(int NeuronNumber_t, int NeuronPosition);
-    bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections);
+    bool UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint,int>> inputConnections);
     void UpdateThreshold(int NeuronNumber_t,double threshold_t);
     void setfired(int Neuron, int current_time);
-    void ActivateNeuronInput(int NeuronNumber, int NeuronInput, int current_time);
+    void ActivateNeuronInput(vector<int> NeuronNumbers_temp, int NeuronInput, int current_time, int strength);
     STint Output(int NeuronNumber, int current_time);
     vector<int> GetNeurons();
     int Neuroncount();
+
     int GetGammafrequency();
     void DoGammaCycle();
     int GetNeuroncount();

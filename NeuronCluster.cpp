@@ -80,7 +80,7 @@ bool NeuronCluster::RemoveNeuron(int NeuronNumber){
     return temp;
 }
 // NeuronNumber, threshold,
-bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections){
+bool NeuronCluster::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint,int>> inputConnections){
     for(int i=0; i<Neuroncount_cluster;i++){
         if (NeuronNumbers[i] == NeuronNumber_t){
 
@@ -116,13 +116,22 @@ bool NeuronCluster::AddNeuronInput(int NeuronNumber_1, int NeuronNumber_2, doubl
     return false;
 }
 bool NeuronCluster::printNeuronInformation(int NeuronNumber){
-        for(int i=0; i<Neuroncount_cluster;i++){
-            if (NeuronNumbers[i] == NeuronNumber){
+    for(int i=0; i<Neuroncount_cluster;i++){
+        for(int j=0; j<Neurons[i].InputconnectionsSize();j++){
+            if (Neurons[i].GetNeuronNumber() == NeuronNumber){
                 Neurons[i].printNeuronInformation();
                 return true;
             }
         }
-        return false;
+    };
+    return false;
+}
+void NeuronCluster::printNeuronInformationInputs(int NeuronNumber){
+    for(int i=0; i<Neuroncount_cluster;i++){
+        if (Neurons[i].hasConnection(NeuronNumber)){
+            Neurons[i].printNeuronInformation();
+        }
+    }
 };
 
 bool NeuronCluster::printAllNeuronInformation(){
@@ -133,15 +142,22 @@ bool NeuronCluster::printAllNeuronInformation(){
     return true;
 };
 
-void NeuronCluster::ActivateNeuronInput(int NeuronNumber, int Neuroninput, int current_time) {
+void NeuronCluster::printAllNeuronInformation(int neuronnumber){
+        Neurons[neuronnumber].printNeuronInformation();
+        cout <<"--------------------------------------------------------" << endl;
+};
 
+void NeuronCluster::ActivateNeuronInput(vector<int> NeuronNumbers_temp, int Neuroninput, int current_time, int strength) {
     int temp;
 
-    for (int i=0; i<Neurons.size();i++) {
-        if (NeuronNumbers[i] == NeuronNumber){
-            //cout << "time"<< current_time%Gammafrequency << endl;
-            temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time);
-            Neurons[i].spike(current_time, 10,temp);
+    for (int i=0; i<NeuronNumbers.size();i++) {
+       for(int j=0; j<NeuronNumbers_temp.size();j++){
+            if (NeuronNumbers[i] == NeuronNumbers_temp[j]){
+                //cout << "Neuroninput:\t" << Neuroninput << endl;
+                temp =Neurons[i].UpdateNeuronInputSpiketime(Neuroninput,current_time,strength);
+                //cout << "temp:\t" << temp << endl;
+                Neurons[i].spike(current_time, 10,temp);
+            }
         }
     }
 };
@@ -194,12 +210,13 @@ double NeuronCluster::GetThreshold(int Neuron) {
 
 void NeuronCluster::GetVoltage(int Cluster) {
     std::ostringstream directory;
-    directory << "test/Cluster"<<Cluster;
+    directory << "test2/Cluster"<<Cluster;
     namespace fs = std::filesystem;
     fs::create_directories(directory.str());
+    //cout << Neuroncount_cluster<<endl;
     for(int i =0; i < Neuroncount_cluster; i++){
         std::ostringstream filename;
-        filename << "test/Cluster"<<Cluster<<"/"<<"Neuron"<<i<<".npy";
+        filename << "test2/Cluster"<<Cluster<<"/"<<"Neuron"<<i<<".npy";
         Neurons[i].GetVoltage(filename.str());
         }
     }

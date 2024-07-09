@@ -12,18 +12,19 @@ using namespace std;
 
 class Neuron {
 public:
-    Neuron(int NeuronNumber_t, double threshold_t,vector<tuple<int,double,STint>> inputConnections_t);
+    Neuron(int NeuronNumber_t, double threshold_t,vector<tuple<int,double,STint,int>> inputConnections_t);
     Neuron();
     void spike(int current_time,int Gammafrequency,int neuroninput);
     STint output(int current_time);
-    int UpdateNeuronInputSpiketime(int Neuronnumber, int current_time);
+    int UpdateNeuronInputSpiketime(int Neuronnumber, int current_time, int strength);
     bool UpdateNeuronInputWeight(int Neuronnumber,double Weights);
     void AddNeuronInput(int Neuronnumber, double weight);
     bool RemoveNeuronInput(int Neuronnumber);
     void UpdateNeuronThreshold(double threshold_t);
-    void UpdateNeuronInputs(vector<tuple<int,double,STint>> inputConnections_t);
+    void UpdateNeuronInputs(vector<tuple<int,double,STint,int>> inputConnections_t);
     void UpdateNeuronOutputs(vector<array<int,2>> outputConnections_t);
     bool printNeuronInformation();
+    bool hasConnection(int NeuronNumber);
     bool UpdateNeuronNumber(int NeuronNumber_t);
     int GetNeuronNumber();
     double GetWeight(int Input);
@@ -36,13 +37,15 @@ public:
     void setfired(int current_time);
 
 private:
+    int samplesize;
     vector<double> spiketrains;
-    int has_fired{};
+    vector<double> tempspiketrains;
+    vector<int> has_fired;
     bool out{};
     int NeuronNumber;
     STint outputspiketime;
     double threshold;
-    vector<tuple<int,double,STint>> inputConnections; //Neuronnumber,weights,inputspiketime
+    vector<tuple<int,double,STint,int>> inputConnections; //Neuronnumber,weights,inputspiketime
 };
 
 

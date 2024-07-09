@@ -20,16 +20,15 @@ vector<tuple<int, int, vector<int>,int>> NeuralNetwork::getNeuronList() {
     return NeuronList;
 }
 
-void NeuralNetwork::ActivateNeuron(int NeuronNumber, int current_time) {
+void NeuralNetwork::ActivateNeuron(int NeuronNumber, int current_time, int strength) {
     STint temp1;
     vector<tuple<int, STint>> temp2;
     int Neuroncluster = get<1>(NeuronList[NeuronNumber]);
     vector<int> Outputs = get<2>(NeuronList[NeuronNumber]);
+    //cout<< "test2\t" << NeuronNumber<< endl;
     //cout << Outputs.size() << endl;
     int delay = get<3>(NeuronList[NeuronNumber]);
-    for (int i = 0; i < Outputs.size(); i++) {
-        NeuronClusters[get<1>(NeuronList[Outputs[i]])].ActivateNeuronInput(Outputs[i], NeuronNumber, current_time);
-    }
+    NeuronClusters[get<1>(NeuronList[Outputs[0]])].ActivateNeuronInput(Outputs, NeuronNumber, current_time, strength);
 }
 
 vector<tuple<int,STint>> NeuralNetwork::Output(int current_time) {
@@ -68,7 +67,7 @@ bool NeuralNetwork::DeleteNeuron(int NeuronNumber){
     return false;
 };
 
-bool NeuralNetwork::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t) {
+bool NeuralNetwork::UpdateNeuron(int NeuronNumber_t,double threshold_t,vector<tuple<int,double,STint,int>> inputConnections,vector<int> outputConnections_t) {
     for(int i =0;i<NeuronList.size();i++){
         if (NeuronNumber_t==get<0>(NeuronList[i])){
             NeuronClusters[get<1>(NeuronList[i])].UpdateNeuron(NeuronNumber_t,threshold_t,inputConnections);
@@ -116,19 +115,19 @@ bool NeuralNetwork::AddNeuron(int ClusterNumber){
     return false;
 }
 
-void NeuralNetwork::AddNeuron(int ClusterNumber, const Neuron& Neuron){
+void NeuralNetwork::AddNeuron(int ClusterNumber, Neuron& Neuron){
     if(NeuronClusters.size() >= ClusterNumber){
         Neurons_total +=1;
         //NeuronList.push_back({Neurons_total-1,ClusterNumber,{},0});
-        NeuronClusters[ClusterNumber].AddNeuron(Neuron,Neurons_total-1);
+        NeuronClusters[ClusterNumber].AddNeuron(Neuron,Neuron.GetNeuronNumber());
     }
 
 }
 
-bool NeuralNetwork::AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint>> inputConnections,vector<int> outputConnections_t){
+bool NeuralNetwork::AddNeuron(int ClusterNumber, int threshold_t,vector<tuple<int,double,STint,int>> inputConnections,vector<int> outputConnections_t){
     if(NeuronClusters.size() >= ClusterNumber){
         Neurons_total +=1;
-        NeuronList.push_back({Neurons_total,ClusterNumber,{0},0});
+        NeuronList.push_back({Neurons_total,ClusterNumber,{0},-1});
         NeuronClusters[ClusterNumber].AddEmptyNeuron(Neurons_total);
     }
     else {
@@ -202,8 +201,20 @@ bool NeuralNetwork::Printclusterinformation(int clusternumber){
     NeuronClusters[clusternumber].printAllNeuronInformation();
     return true;
 }
+
+void NeuralNetwork::Printneuroninformation(int clusternumber, int neuronnumber){
+    NeuronClusters[clusternumber].printNeuronInformation(neuronnumber);
+}
+
 void NeuralNetwork::Printneuroninformation(int NeuronNumber){
-    NeuronClusters[GetCluster(NeuronNumber)].printNeuronInformation(NeuronNumber);
+    for( int i=0; i< NeuronClusters.size(); i++){
+        NeuronClusters[i].printNeuronInformation(NeuronNumber);
+    }
+}
+void NeuralNetwork::PrintneuroninformationInputs(int NeuronNumber){
+    for( int i=0; i< NeuronClusters.size(); i++){
+        NeuronClusters[i].printNeuronInformation(NeuronNumber);
+    }
 }
 
 void NeuralNetwork::PrintNeuronList(){
@@ -236,6 +247,37 @@ void NeuralNetwork::PrintNeuronList(int NeuronCluster){
     }
     cout << endl;
 };
+
+void NeuralNetwork::PrintNeuronListNeuron(int NeuronNumber){
+    cout << "Neurons Information: \t" << endl;
+    for (auto & i : NeuronList){
+        if(NeuronNumber==get<0>(i)){
+            cout << "Neuron:\t"<<get<0>(i)<<"\tCluster\t" << get<1>(i)<<endl;
+            for(auto & j : get<2>(i)){
+                cout << "\tOutput:\t" << (j) << endl;
+            }
+            return;
+        }
+
+    }
+    cout << endl;
+};
+
+void NeuralNetwork::PrintNeuronListNeuronOutput(int NeuronNumber){
+    cout << "Neurons Information: \t" << endl;
+    for (auto & i : NeuronList){
+        for(int j=0; j< get<2>(i).size();j++){
+            if(NeuronNumber==get<2>(i)[j]){
+                cout << "Neuron:\t"<<get<0>(i)<<"\tCluster\t" << get<1>(i)<<endl;
+                for(auto & j : get<2>(i)){
+                    cout << "\tOutput:\t" << (j) << endl;
+                }
+            }
+        }
+    }
+    cout << endl;
+};
+
 
 vector<NeuronCluster> NeuralNetwork::GetSystem() {
         return NeuronClusters;
@@ -323,3 +365,143 @@ void NeuralNetwork::MakeNeuronListFullConnected(vector<int> shape){
     }
 
 };
+
+void NeuralNetwork::MakeNeuronListPool(array<int,3> shapein,int poolsize,int clusternumber){
+    int x_axis = shapein[0];
+    int y_axis = shapein[1];
+    int polarity = shapein[2];
+    int neuron = NeuronList.size();
+    //cout << x_axis << "\t" << y_axis << "\t" << polarity << "\t"<< clusternumber-1<< endl;
+    tuple<int, int,vector<int>,int> temp;
+    for (int k=0; k<polarity;k++){
+        for (int j=0; j<y_axis;j++) {
+            for(int i=0;i<x_axis;i++) {
+                get<0>(temp) = neuron;
+                get<1>(temp) = clusternumber - 1;
+                int x_temp = int(i/poolsize);
+                int y_temp = int(j/poolsize);
+                int neuronnumber = (x_axis/poolsize)*(y_axis/poolsize)*k+x_temp +y_temp*x_axis/poolsize;
+                neuronnumber +=x_axis*y_axis*polarity;
+                get<2>(temp).push_back(neuronnumber);
+                get<3>(temp)=0;
+                neuron++;
+                NeuronList.push_back(temp);
+                get<2>(temp).clear();
+            }
+        }
+    }
+    //cout << "Neuronlist size:\t" << NeuronList.size() << endl;
+    return;
+};
+
+void NeuralNetwork::MakeNeuronListConv(array<int,4> shapein,int poolsize,int clusternumber){
+    int x_axis = shapein[0];
+    int y_axis = shapein[1];
+    int polarity_in = shapein[2];
+    int polarity_out = shapein[3];
+    int neuron = NeuronList.size();
+    int neuron_start = neuron;
+    //cout << x_axis << "\t" << y_axis << "\t" << polarity_in << "\t"<< clusternumber-1<< endl;
+    tuple<int, int,vector<int>,int> temp;
+
+    for (int k=0; k<polarity_in;k++) {
+        for (int j = 0; j < y_axis; j++) {
+            for (int i = 0; i < x_axis; i++) {
+                get<0>(temp) = neuron;
+                get<1>(temp) = clusternumber - 1;
+                int neuronnumber;
+                for (int m = 0; m < polarity_out; m++) {
+                    for (int y_temp = -int(poolsize / 2); y_temp < int(poolsize / 2) + 1; y_temp++) {
+                        for (int x_temp = -int(poolsize / 2); x_temp < int(poolsize / 2) + 1; x_temp++) {
+                            if (x_temp + i >= 0 && x_temp + i < x_axis && y_temp + j >= 0 && y_temp + j < x_axis) {
+                                neuronnumber = x_temp + i + (y_temp + j) * x_axis + y_axis * x_axis * k + x_axis * y_axis * polarity_in * m + neuron_start +x_axis*y_axis*polarity_in;
+                                get<2>(temp).push_back(neuronnumber);
+                            }
+                        }
+                    }
+                }
+                get<2>(temp).push_back(neuronnumber);
+                get<3>(temp) = 0;
+                neuron++;
+                NeuronList.push_back(temp);
+                get<2>(temp).clear();
+            }
+        }
+    }
+    //cout << "Neuronlist size:\t" << NeuronList.size() << endl;
+}
+
+void NeuralNetwork::MakeNeuronListFull(array<int,3> shapein,int neuronsout,int clusternumber){
+    int x_axis = shapein[0];
+    int y_axis = shapein[1];
+    int polarity_in = shapein[2];
+    int neuron = NeuronList.size();
+    int neuron_start = neuron;
+    //cout << x_axis << "\t" << y_axis << "\t" << polarity_in << "\t"<< clusternumber-1<< endl;
+    tuple<int, int,vector<int>,int> temp;
+    for (int k = 0; k < polarity_in; k++) {
+        for (int j = 0; j < y_axis; j++) {
+            for (int i = 0; i < x_axis; i++) {
+                get<0>(temp) = neuron;
+                get<1>(temp) = clusternumber - 1;
+                for (int l=0; l<neuronsout;l++) {
+                    int neuronnumber = neuron_start + x_axis * y_axis * polarity_in +l;
+                    get<2>(temp).push_back(neuronnumber);
+                }
+                get<3>(temp) = 0;
+                neuron++;
+                NeuronList.push_back(temp);
+                get<2>(temp).clear();
+            }
+        }
+    }
+    //cout << "Neuronlist size:\t" << NeuronList.size() << endl;
+}
+
+void NeuralNetwork::MakeNeuronListOutput(array<int,3> shapein,int clusternumber){
+    int x_axis = shapein[0];
+    int y_axis = shapein[1];
+    int polarity_in = shapein[2];
+    int neuron = NeuronList.size();
+    int neuron_start = neuron;
+    //cout << x_axis << "\t" << y_axis << "\t" << polarity_in << "\t"<< clusternumber-1<< endl;
+    tuple<int, int,vector<int>,int> temp;
+    for (int k = 0; k < polarity_in; k++) {
+        for (int j = 0; j < y_axis; j++) {
+            for (int i = 0; i < x_axis; i++) {
+                get<0>(temp) = neuron;
+                get<1>(temp) = clusternumber - 1;
+                get<3>(temp) = 0;
+                neuron++;
+                NeuronList.push_back(temp);
+            }
+        }
+    }
+    //cout << "Neuronlist size:\t" << NeuronList.size() << endl;
+}
+
+void NeuralNetwork::DeleteConnectionRandom(int NeuralCluster, int connections){
+    srand ( time(NULL) );
+    int temp;
+    int size = NeuronClusters[NeuralCluster].GetNeuroncount();
+    for(int i=0; i<Neurons_total;i++){
+        if(get<1>(NeuronList[i])==NeuralCluster){
+            temp = i;
+            break;
+        }
+    }
+    //cout << "Layer: " << NeuralCluster << "\t Starts at: " << temp << endl;
+    for(int i=0; i<connections;i++){
+        int random = temp +rand()%size;
+        int cluster = get<1>(NeuronList[random]);
+        int vectorsize = get<2>(NeuronList[random]).size();
+        if (vectorsize != 0){
+            int deletedconnection = rand()%vectorsize;
+            get<2>(NeuronList[random]).erase(get<2>(NeuronList[random]).begin()+deletedconnection);
+        }
+        else{
+            i--;
+        }
+    }
+    cout << "Deleted connections: " << connections << endl;
+}

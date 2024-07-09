@@ -11,4 +11,5 @@
 #include "npy.hpp"
 void filewriterbin(string filename, NeuralNetwork& Simulation);
 void filereaderbin(string filename, NeuralNetwork& Simulation);
+void filereaderbinnew(string filename, NeuralNetwork& Simulation);
 #endif //THESIS_FILEREADERBIN_H

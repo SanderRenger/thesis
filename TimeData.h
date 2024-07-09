@@ -13,7 +13,8 @@
 #include <vector>
 #include <string>
 #include <fstream>
-struct TimeData {
+#include "npy.hpp"
+struct TimeData_bs2 {
     std::vector<unsigned char> x;
     std::vector<unsigned char> y;
     std::vector<unsigned char> p;
@@ -22,5 +23,15 @@ struct TimeData {
     std::vector<unsigned long long> ts3;
     std::vector<unsigned long long> ts;
 };
-TimeData Read_Ndataset(const std::string& filename);
+struct TimeData_npy {
+    std::vector<int> x;
+    std::vector<int> y;
+    std::vector<int> p;
+    std::vector<int> ts1;
+    std::vector<int> ts2;
+    std::vector<int> ts3;
+    std::vector<int> ts;
+};
+TimeData_npy Read_Ndataset_bs2(const std::string& filename);
+TimeData_npy Read_Ndataset_npy(const std::string& filename);
 #endif //THESIS_TIMEDATA_H

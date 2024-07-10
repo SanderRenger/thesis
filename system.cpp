@@ -35,11 +35,13 @@ vector<tuple<int,STint>> NeuralNetwork::Output(int current_time) {
     STint temp1;
     vector<tuple<int, STint>> temp2;
     int temp = NeuronClusters[0].GetNeuroncount();
-
-    for (int i =NeuronClusters[0].Neuroncount()-1; i <NeuronList.size(); i++) {
-       temp1 = NeuronClusters[get<1>(NeuronList[i])].Output(i, current_time);
-        if (!temp1.get_bool()) {
-            temp2.push_back({i, temp1});
+    for (int i =0; i <NeuronList.size(); i++) {
+        //cout <<get<1>(NeuronList[i]) <<"\t" <<i<< endl;
+        if(get<1>(NeuronList[i])>-1){
+            temp1 = NeuronClusters[get<1>(NeuronList[i])].Output(i, current_time);
+            if (!temp1.get_bool()) {
+                temp2.push_back({i, temp1});
+            }
         }
     }
     if (!temp2.empty()){
@@ -348,6 +350,7 @@ void NeuralNetwork::MakeNeuronListFullConnected(vector<int> shape){
     vector<tuple<int, int,vector<int>,int>> temp;
     int count=0;
     //cout << shape.size()<< endl;
+    cout << "test\t" << NeuronList.size()<< endl;
     for(int k =0;k < shape.size()-1;k++){
         vector<int> outputs;
         count+=shape[k];
@@ -371,6 +374,7 @@ void NeuralNetwork::MakeNeuronListPool(array<int,3> shapein,int poolsize,int clu
     int y_axis = shapein[1];
     int polarity = shapein[2];
     int neuron = NeuronList.size();
+    cout << "test\t" << neuron<< endl;
     //cout << x_axis << "\t" << y_axis << "\t" << polarity << "\t"<< clusternumber-1<< endl;
     tuple<int, int,vector<int>,int> temp;
     for (int k=0; k<polarity;k++){
@@ -401,6 +405,7 @@ void NeuralNetwork::MakeNeuronListConv(array<int,4> shapein,int poolsize,int clu
     int polarity_out = shapein[3];
     int neuron = NeuronList.size();
     int neuron_start = neuron;
+    cout << "test\t" << neuron_start<< endl;
     //cout << x_axis << "\t" << y_axis << "\t" << polarity_in << "\t"<< clusternumber-1<< endl;
     tuple<int, int,vector<int>,int> temp;
 
@@ -414,16 +419,21 @@ void NeuralNetwork::MakeNeuronListConv(array<int,4> shapein,int poolsize,int clu
                     for (int y_temp = -int(poolsize / 2); y_temp < int(poolsize / 2) + 1; y_temp++) {
                         for (int x_temp = -int(poolsize / 2); x_temp < int(poolsize / 2) + 1; x_temp++) {
                             if (x_temp + i >= 0 && x_temp + i < x_axis && y_temp + j >= 0 && y_temp + j < x_axis) {
-                                neuronnumber = x_temp + i + (y_temp + j) * x_axis + y_axis * x_axis * k + x_axis * y_axis * polarity_in * m + neuron_start +x_axis*y_axis*polarity_in;
+                                neuronnumber = x_temp + i + (y_temp + j) * x_axis + y_axis * x_axis * k + x_axis * y_axis  * m + neuron_start +x_axis*y_axis*polarity_in;
                                 get<2>(temp).push_back(neuronnumber);
+                                //cout <<"X\t"<<x_temp + i<<" Y:\t"<<y_temp + j << " M:\t" << m <<"NeuronNumber:\t" <<neuronnumber <<endl;
                             }
                         }
                     }
                 }
-                get<2>(temp).push_back(neuronnumber);
+
+                //get<2>(temp).push_back(neuronnumber);
                 get<3>(temp) = 0;
+                //cout << " size:\t" << get<2>(temp).size() << endl;
                 neuron++;
+                //cout <<"Neuron:\t" << get<0>(temp) <<" Cluster:\t" << get<1>(temp) << " Size:\t" << get<2>(temp).size() << endl;
                 NeuronList.push_back(temp);
+                //exit(0);
                 get<2>(temp).clear();
             }
         }
@@ -437,6 +447,7 @@ void NeuralNetwork::MakeNeuronListFull(array<int,3> shapein,int neuronsout,int c
     int polarity_in = shapein[2];
     int neuron = NeuronList.size();
     int neuron_start = neuron;
+    cout << "test\t" << neuron_start<< endl;
     //cout << x_axis << "\t" << y_axis << "\t" << polarity_in << "\t"<< clusternumber-1<< endl;
     tuple<int, int,vector<int>,int> temp;
     for (int k = 0; k < polarity_in; k++) {

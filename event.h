@@ -46,7 +46,8 @@ public:
     void addEvent(const event& event_t);
     void handleEvents(NeuralNetwork &NNetwork,int current_time);
     void printqueue();
-    void printqueuetofile(string filename);
+    void printqueuetofiletxt(string filename);
+    void printqueuetofilenpy(string filename);
     void printnewqueue();
     void swapqueue();
     void swapnewqueue();

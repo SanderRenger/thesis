@@ -83,7 +83,6 @@ void EventHandler::handleEvents(NeuralNetwork &NNetwork, int current_time) {
             }
             else {
                 event current_neuron = eventqueue.back();
-
                 int test = NNetwork.GetCluster(current_neuron.getneuronNumber());
                 NNetwork.ActivateNeuron(current_neuron.getneuronNumber(),  current_time,current_neuron.getstrength());
 
@@ -174,13 +173,30 @@ void EventHandler::printqueue() {
     cout << endl;
 };
 
-void EventHandler::printqueuetofile(string filename) {
+void EventHandler::printqueuetofiletxt(string filename) {
     ofstream file;
     file.open (filename);
     for (int i=0; i<eventqueue.size();i++){
         file  << "Neuron:\t"<<(eventqueue[i].getneuronNumber()) <<"\tDelay:\t" <<eventqueue[i].getdelay()<< endl;
 
     }
+    file << endl;
+    file.close();
+};
+void EventHandler::printqueuetofilenpy(string filename) {
+    ofstream file;
+    file.open (filename);
+    vector<int> queue;
+    for (int i=0; i<eventqueue.size();i++){
+        queue.push_back(eventqueue[i].getneuronNumber());
+        queue.push_back(eventqueue[i].getdelay());
+        queue.push_back(eventqueue[i].getstrength());
+    }
+    npy::npy_data_ptr<int> d;
+    d.data_ptr = queue.data();
+    d.shape =  {3,unsigned(queue.size())/3};
+    d.fortran_order = false; // optional
+    npy::write_npy(filename, d);
     file << endl;
     file.close();
 };

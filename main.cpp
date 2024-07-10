@@ -51,6 +51,7 @@ int Run(NeuralNetwork &Simulation, EventHandler &EventHandler){
         simulationtime++;
         if(EventHandler.isempty()){
             EventHandler.swapnewqueue();
+            EventHandler.printqueuetofilenpy("queue.npy");
             simulationtime=0;
         }
         if (EventHandler.isempty()||simulationtime==1305) {
@@ -97,16 +98,17 @@ int main() {
     filename2 << "DVSGesturedataset/user01_fluorescent/0"<<".npy";
     EventHandler.createevents(filename2.str(), {128,128});
 //    EventHandler.printqueuetofile("testqueue2.txt");
-//    Simulation.PrintNeuronListNeuronOutput(32768);
-    //Simulation.Printneuroninformation(34882);
+    Simulation.PrintNeuronListNeuron(26929);
+   Simulation.Printneuroninformation(34444);
     //Simulation.PrintneuroninformationInputs(0);
     //Simulation.Printclusterinformation(1);
-    EventHandler.printqueuetofile("testqueue.txt");
+//    EventHandler.printqueuetofiletxt("testqueue.txt");
+
     int temp = Run(Simulation,EventHandler);
-    vector<int> outputs;
-    outputs.push_back(temp);
-    cout << outputs[0] << endl;
-    Simulation.PrintNeuronVoltagetofile(0);
+//    vector<int> outputs;
+//    outputs.push_back(temp);
+//    cout << outputs[0] << endl;
+//    Simulation.PrintNeuronVoltagetofile(0);
 //    Simulation.PrintNeuronVoltagetofile(1);
 //    Simulation.Printneuroninformation(-1,0);
 //    Simulation.Printclusterinformation(1);
